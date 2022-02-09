@@ -2,3 +2,5 @@
 env
 BlogProject/BlogProject/settings.py
 BlogProject/BlogProject/__pycache__
+__pycache__
+BlogProject/BlogApp/migrations
