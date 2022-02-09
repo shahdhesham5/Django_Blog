@@ -13,6 +13,7 @@
             <div class="row">
                 <span>hello, <b>{{request.user}}</b> </span>
                 <span ><a href="{% url 'login' %}">sign in</a></span>
+                <span ><a href="{% url 'logout' %}">sign out</a></span>
                 <span><a href="{% url 'posts' %}">posts</a></span>
             </div>
     {% endblock %}
