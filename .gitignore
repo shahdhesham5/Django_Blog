@@ -1,3 +1,4 @@
 # created by virtualenv automatically
 env
 BlogProject/BlogProject/settings.py
+BlogProject/BlogProject/__pycache__
