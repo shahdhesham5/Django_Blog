@@ -1,0 +1,39 @@
+{% extends 'blogapp/base.html' %}
+{% load static %}
+
+<html>
+
+<head>
+    <title>Home</title>
+
+</head>
+
+<body >
+    {% block title_block %}
+    <div class="container">
+        
+        <h1>Users</h1>
+
+    {% endblock %}
+
+
+    {% block main_block %}
+    <table border="1" class="table mt-5">
+        <tr>
+            <th>Username</th>
+            <th>is admin</th>
+
+            {% for user in users %}
+        <tr>
+            <td>{{ user.username }}</td>
+            <td>{{ user.is_superuser }}</td>
+        </tr>
+        {% endfor %}
+        </tr>
+    </table>
+    </div>
+    {% endblock %}
+
+</body>
+
+</html>
