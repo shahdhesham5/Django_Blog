@@ -71,6 +71,19 @@ def showUsers(request):
     blocked_users = User.objects.filter(groups__name="blockedusers")
     context ={'users' : users, 'blocked_users':blocked_users}
     return render(request,'BlogApp/showusers.html', context)
+    #makeadmin 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def makeadmin(request, user_id):
+    user=User.objects.get(id= user_id)
+    my_group=Group.objects.get(name="admin")
+    my_group.user_set.add(user)
+    user.is_staff = True
+    user.is_superuser = True
+    user.save()
+
+    return redirect('showusers')
+
 
 
 #block user
@@ -103,6 +116,9 @@ def post(request,post_id):
 # @allowed_users(allowed_roles=['admin'])
 def manageBlog(request):
     return render(request,'BlogApp/manageblog.html')
+
+
+
 
 #show categories
 def categories(request):
