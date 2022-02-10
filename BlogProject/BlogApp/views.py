@@ -22,7 +22,7 @@ def register(request):
             username = form.cleaned_data.get('username')
             #assign the user to a group on creation
             group = Group.objects.get(name='normaluser')
-            usergit.groups.add(group)
+            user.groups.add(group)
             messages.success(request, "Account created successfully for "+username)
             return redirect ('login')
     context = {'form':form}
