@@ -100,7 +100,7 @@ def post(request,post_id):
 
 #manageblog
 @login_required(login_url='login')
-@allowed_users(allowed_roles=['admin'])
+# @allowed_users(allowed_roles=['admin'])
 def manageBlog(request):
     return render(request,'BlogApp/manageblog.html')
 
