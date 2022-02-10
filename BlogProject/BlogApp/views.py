@@ -94,6 +94,7 @@ def categories(request):
 
 
 #add category
+@allowed_users(allowed_roles=['admin'])
 def addCat(request):
     if request.method == 'POST': #if submited, check the inputs, validate form, then save
         input = request.POST.get("category")
