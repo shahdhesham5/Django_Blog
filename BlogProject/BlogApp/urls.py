@@ -14,6 +14,7 @@ urlpatterns = [
     path('login/', views.loginPage, name='login'),
     path('logout/', views.logoutuser, name='logout'),
     path('manageblog/', views.manageBlog, name='manageblog'),
-    #show users
+    #users
     path('showusers/', views.showUsers, name='showusers'),
+    path('blockuser/<user_id>', views.blockUser, name='blockuser'),
 ]
