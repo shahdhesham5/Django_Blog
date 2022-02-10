@@ -1,24 +1,39 @@
 from django.db import models
 from django.contrib.auth.models import User #User model to access users and admins
-
-class Comment(models.Model):
-    comment_info = models.CharField(max_length=250)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    # post = models.ForeignKey(User, on_delete=models.CASCADE)
-    def __str__(self):
-        return self.comment_info
-
+from django.utils import timezone
 
 class Category(models.Model):
     category = models.CharField(max_length=20)
     def __str__(self):
         return self.category
 
-
 class Post(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    content = models.CharField(max_length=280)
-    date_posted = models.DateTimeField(auto_now_add=True)
-    category = models.ForeignKey(Category,on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length = 50)
+    content = models.CharField(max_length=500)
+    created_on = models.DateTimeField(default=timezone.now)
+    post_img= models.ImageField(upload_to='images/', null=True)
+    category = models.ForeignKey(Category,on_delete=models.CASCADE, default=None)
+    
     def __str__(self):
-        return self.text
+        return self.title      
+
+    class Meta:
+        ordering = ('title',)
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment_info = models.CharField(max_length=250)
+    created_on = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.comment_info
+
+
+
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> c412737e6ea25e813494d9e1b7f467cc49ebfd89
