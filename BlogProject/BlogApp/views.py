@@ -3,8 +3,8 @@ from multiprocessing import context
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
-from BlogApp.models import Category
-from .forms import CreateUserForm,CategoryForm  #the modified UserCreationForm
+from BlogApp.models import Category, Post
+from .forms import CreateUserForm,CategoryForm,PostForm #the modified UserCreationForm
 #authentication
 from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm 
 from django.contrib import messages
@@ -88,11 +88,6 @@ def home(request):
     context = {'all_categories':all_categories}
     return render(request, 'BlogApp/home.html',context)
 
-#posts
-@login_required(login_url='login')
-def posts(request):
-    return render(request, 'BlogApp/posts.html')
-
 #manageblog
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
@@ -133,4 +128,49 @@ def delectCat(request, cat_id):
     category.delete()
     return redirect('categories')
 
+#show posts
+def posts(request):
+    all_posts = Post.objects.all()
+    context = {'all_posts':all_posts}
+    return render (request,'BlogApp/posts.html', context)
 
+
+#addpost
+def addpost(request):
+    if request.method == 'POST': #if submited, check the inputs, validate form, then save
+        form = PostForm(request.POST , request.FILES)
+        print(request.POST)
+        if form.is_valid():
+            print("is valid")
+            form.save()
+            return redirect('posts')
+    else:
+        # form = PostForm(request.GET, initial={'user': request.user})
+        form = PostForm()
+        context = {'form': form}
+        print("get")
+        return render (request, 'BlogApp/addpost.html', context)
+    # form = PostForm()
+    # user = request.user.username
+    # context = {'user': user, 'form': form}
+    # return render (request , 'BlogApp/addpost.html', context)
+
+    
+#delete post
+def deletepost(request, post_id):
+    post = Post.objects.get(id=post_id)
+    post.delete()
+    return redirect('posts')
+
+
+
+#searchforPosts
+# @login_required(login_url='login')
+# def searchforposts(request):
+#     keyword = request.GET.get("keyword")
+#     if keyword:
+#         Posts = Posts.objects.filter(title__contains = keyword)
+#         return render(request,"posts.html",{"Posts":Posts})
+
+#     Posts = Posts.objects.all()
+#     return render(request, 'BlogApp/posts.html',{"Posts":Posts})
