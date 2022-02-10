@@ -11,10 +11,13 @@
 {% endblock %}
 
 {% block main %}
-    <h2>Home</h2>
-    <div class="col-1">
-        <div style="border: 1px solid black;">
-            side bar
-        </div>
+    <h2><b>Home</b> </h2>
+    <div class=" col-2">
+        <h3>Categories</h3>
+        <ul class="list-group">
+            {% for category in all_categories %}
+            <li class="list-group-item">{{category.category}}</li>
+            {% endfor %}
+        </ul>
     </div>
 {% endblock %}
