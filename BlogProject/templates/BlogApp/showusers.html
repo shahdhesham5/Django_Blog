@@ -17,13 +17,20 @@
             <th>id</th>
             <th>Username</th>
             <th>is admin</th>
-
             {% for user in users %}
+        {% if request.user.username == user.username %}
+        <tr style="background-color: #d63031; color: wheat;">
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.is_superuser }}</td>
+        </tr>
+        {% else %}
         <tr>
             <td>{{ user.id }}</td>
             <td>{{ user.username }}</td>
             <td>{{ user.is_superuser }}</td>
         </tr>
+            {% endif %}
         {% endfor %}
         </tr>
     </table>
