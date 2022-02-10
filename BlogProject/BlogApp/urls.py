@@ -14,4 +14,6 @@ urlpatterns = [
     path('manageblog/', views.manageBlog, name='manageblog'),
     #show users
     path('showusers/', views.showUsers, name='showusers'),
+    path('makadmin/<user_id>', views.makeadmin, name='makeadmin'),
+
 ]

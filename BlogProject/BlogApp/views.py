@@ -1,4 +1,6 @@
+from email import contentmanager
 from multiprocessing import context
+from os import name
 from tokenize import group
 from unicodedata import category
 from django.http import HttpResponse
@@ -67,6 +69,19 @@ def showUsers(request):
     users = User.objects.all()
     context ={'users' : users}
     return render(request,'BlogApp/showusers.html', context)
+    #makeadmin 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def makeadmin(request, user_id):
+    user=User.objects.get(id= user_id)
+    my_group=Group.objects.get(name="admin")
+    my_group.user_set.add(user)
+    user.is_staff = True
+    user.is_superuser = True
+    user.save()
+
+    return redirect('showusers')
+
 
 
 #home
@@ -85,6 +100,9 @@ def posts(request):
 @allowed_users(allowed_roles=['admin'])
 def manageBlog(request):
     return render(request,'BlogApp/manageblog.html')
+
+
+
 
 #show categories
 def categories(request):

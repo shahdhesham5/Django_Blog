@@ -17,18 +17,29 @@
             <th>id</th>
             <th>Username</th>
             <th>is admin</th>
+            <th> make admin </th>
             {% for user in users %}
-        {% if request.user.username == user.username %}
-        <tr style="background-color: #d63031; color: wheat;">
-            <td>{{ user.id }}</td>
-            <td>{{ user.username }}</td>
-            <td>{{ user.is_superuser }}</td>
-        </tr>
-        {% else %}
+            
+         {% if request.user.username == user.username %}
+            <tr style="background-color: #d63031; color: wheat;">
+             <td>{{ user.id }}</td>
+             <td>{{ user.username }}</td>
+             <td>{{ user.is_superuser }}</td>
+             <td> Already Admin</td>
+          </tr>
+         {% else %}
         <tr>
             <td>{{ user.id }}</td>
             <td>{{ user.username }}</td>
             <td>{{ user.is_superuser }}</td>
+            
+            <td>{% if user.is_superuser == False %}
+                 <button class="btn"> 
+                    <a href="{% url 'makeadmin' user.id %}">make it admin</a> </button>
+                {% else %}
+                Already Admin
+                {%endif%}
+            </td>
         </tr>
             {% endif %}
         {% endfor %}
