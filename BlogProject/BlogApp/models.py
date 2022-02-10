@@ -1,3 +1,4 @@
+from unicodedata import name
 from django.db import models
 from django.contrib.auth.models import User #User model to access users and admins
 from django.utils import timezone
