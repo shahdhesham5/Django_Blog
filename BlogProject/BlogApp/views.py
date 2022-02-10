@@ -1,3 +1,4 @@
+from tokenize import group
 from django.shortcuts import render,redirect
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
 from .forms import CreateUserForm  #the modified UserCreationForm
@@ -6,6 +7,7 @@ from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserFo
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
 from django.contrib.auth.models import User #User model to access users and admins
 
 #authentications
@@ -16,9 +18,12 @@ def register(request):
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
         if form.is_valid():
-            form.save()
-            user = form.cleaned_data.get('username')
-            messages.success(request, "Account created successfully for "+user)
+            user = form.save()
+            username = form.cleaned_data.get('username')
+            #assign the user to a group on creation
+            group = Group.objects.get(name='normaluser')
+            usergit.groups.add(group)
+            messages.success(request, "Account created successfully for "+username)
             return redirect ('login')
     context = {'form':form}
     return render(request, 'BlogApp/register.html', context)
