@@ -95,8 +95,6 @@ def categories(request):
     all_categories = Category.objects.all()
     context = {'all_categories':all_categories}
     return render (request,'BlogApp/categories.html', context)
-<<<<<<< HEAD
-=======
 
 
 #add category
@@ -123,4 +121,3 @@ def delectCat(request, cat_id):
     category = Category.objects.get(id=cat_id)
     category.delete()
     return redirect('categories')
->>>>>>> c412737e6ea25e813494d9e1b7f467cc49ebfd89

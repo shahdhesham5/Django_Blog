@@ -32,8 +32,3 @@ class Comment(models.Model):
 
 
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> c412737e6ea25e813494d9e1b7f467cc49ebfd89
