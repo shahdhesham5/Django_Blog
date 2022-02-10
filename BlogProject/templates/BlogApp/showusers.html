@@ -41,8 +41,35 @@
                 {%endif%}
             </td>
         </tr>
+            <th>actions</th>
+        {% for user in users %}
+            {% if request.user.username == user.username %}
+                <tr style="background-color: #d63031; color: wheat;">
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.is_superuser }}</td>
+                    <td></td>
+                </tr>
+            {% else %}
+                {% if not user.is_superuser %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.is_superuser }}</td>
+                    {% if user.username in blocked_users %}
+                    <td><a href="{% url 'blockuser' user.id %}">unblock</a></td>
+                    {% else %}
+                    <td><a href="{% url 'blockuser' user.id %}">block</a></td>
+                    {% endif %}
+                </tr>
+                {% else %}
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.is_superuser }}</td>
+                    <td></td>
+                {% endif %}
             {% endif %}
         {% endfor %}
-        </tr>
+         </tr>
     </table>
 {% endblock %}

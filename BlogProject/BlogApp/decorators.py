@@ -1,4 +1,4 @@
-from tokenize import group
+
 from django.http import HttpResponse
 from django.shortcuts import redirect
 #if the user is logged in they will be directed to their home page
@@ -39,3 +39,4 @@ def admin_only(view_func):
             if group == 'admin':
                 return view_func(request, *args, **kwargs)
         return wrapper_func
+
