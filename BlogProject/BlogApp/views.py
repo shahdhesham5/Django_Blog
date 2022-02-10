@@ -39,7 +39,7 @@ def loginPage(request):
         #if not, show this flash message 
         else:
             messages.info(request, 'Username or Password is incorrect')
-    #once the us
+    #displaying the loging form
     context ={}
     return render(request, 'BlogApp/login.html', context)
 
