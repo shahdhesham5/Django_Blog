@@ -59,10 +59,14 @@ def showusers(request):
 
 
 #home
-
 def home(request):
     return render(request, 'BlogApp/home.html')
 
+#Post details
+def post(request,post_id):
+
+    return render(request, 'BlogApp/post.html')
+    
 #posts
 @login_required(login_url='login')
 def posts(request):
