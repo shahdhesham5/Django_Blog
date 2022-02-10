@@ -1,11 +1,13 @@
+from tokenize import group
 from django.shortcuts import render,redirect
-from BlogApp.decorators import unauthenticated_user 
+from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
 from .forms import CreateUserForm  #the modified UserCreationForm
 #authentication
 from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
 from django.contrib.auth.models import User #User model to access users and admins
 
 #authentications
@@ -16,9 +18,12 @@ def register(request):
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
         if form.is_valid():
-            form.save()
-            user = form.cleaned_data.get('username')
-            messages.success(request, "Account created successfully for "+user)
+            user = form.save()
+            username = form.cleaned_data.get('username')
+            #assign the user to a group on creation
+            group = Group.objects.get(name='normaluser')
+            user.groups.add(group)
+            messages.success(request, "Account created successfully for "+username)
             return redirect ('login')
     context = {'form':form}
     return render(request, 'BlogApp/register.html', context)
@@ -44,22 +49,23 @@ def loginPage(request):
     return render(request, 'BlogApp/login.html', context)
 
 #logout
+#redirect to home-page after logout, as an AnonymousUser
 def logoutuser(request):
     logout(request)
-    return redirect('login')
+    return redirect('home')
 
 
 # Create your views here.
 #show admins and users
 @login_required(login_url='login')
-def showusers(request):
+@admin_only
+def showUsers(request):
     users = User.objects.all()
     context ={'users' : users}
     return render(request,'BlogApp/showusers.html', context)
 
 
 #home
-
 def home(request):
     return render(request, 'BlogApp/home.html')
 
@@ -67,3 +73,9 @@ def home(request):
 @login_required(login_url='login')
 def posts(request):
     return render(request, 'BlogApp/posts.html')
+
+#manageblog
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def manageBlog(request):
+    return render(request,'BlogApp/manageblog.html')

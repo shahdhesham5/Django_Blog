@@ -3,7 +3,7 @@
 
 {% block head %}
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <title>Home</title>
+    <title>Manage blog</title>
 {% endblock %}
 
 {% block navbar %}
@@ -11,10 +11,7 @@
 {% endblock %}
 
 {% block main %}
-    <h2>Home</h2>
-    <div class="col-1">
-        <div style="border: 1px solid black;">
-            side bar
-        </div>
-    </div>
+    <h2>Manage blog</h2>
+    <a href="{% url 'showusers' %}"> showusers</a>
 {% endblock %}
+
