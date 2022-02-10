@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from BlogApp.decorators import unauthenticated_user 
-from .forms import CreateUserForm  #the modified UserCreationForm
+from .forms import CreateUserForm,CommentForm  #the modified UserCreationForm
+# from .models import Post,Comment
 #authentication
 from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm 
 from django.contrib import messages
@@ -64,6 +65,5 @@ def home(request):
     return render(request, 'BlogApp/home.html')
 
 #posts
-@login_required(login_url='login')
-def posts(request):
-    return render(request, 'BlogApp/posts.html')
+
+
