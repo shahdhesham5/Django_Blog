@@ -3,7 +3,7 @@
 
 {% block head %}
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <title>Posts</title>
+    <title>Categories</title>
 {% endblock %}
 
 {% block navbar %}
@@ -11,6 +11,10 @@
 {% endblock %}
 
 {% block main %}
-    <h2>Posts</h2>
-
+    <h2>categories</h2>
+    <div class="col-1">
+        {% for category in all_categories %}
+            {{category.category}}
+        {% endfor %}
+    </div>
 {% endblock %}
