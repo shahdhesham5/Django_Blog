@@ -1,5 +1,6 @@
 from multiprocessing import context
 from tokenize import group
+from unicodedata import category
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
@@ -100,16 +101,17 @@ def categories(request):
 #add category
 def addCat(request):
     if request.method == 'POST': #if submited, check the inputs, validate form, then save
-        form = CategoryForm(request.POST)
-        all_categories = Category.objects.all()
-        if request.POST in all_categories:
-            return HttpResponse("exists")
-        else:
+        input = request.POST.get("category")
+        try:    
+            x = Category.objects.get(category=input)
+            messages.info(request, 'Category already exists')
+            return redirect('add-cat')
+        except:
             form = CategoryForm(request.POST)
             if form.is_valid():
                 form.save()
                 return redirect('categories')
-
+                
     else:
         form = CategoryForm()
         context = {'form': form}
