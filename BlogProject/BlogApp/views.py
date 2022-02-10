@@ -1,6 +1,8 @@
+from multiprocessing import context
 from tokenize import group
 from django.shortcuts import render,redirect
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
+from BlogApp.models import Category
 from .forms import CreateUserForm  #the modified UserCreationForm
 #authentication
 from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm 
@@ -79,3 +81,9 @@ def posts(request):
 @allowed_users(allowed_roles=['admin'])
 def manageBlog(request):
     return render(request,'BlogApp/manageblog.html')
+
+
+def categories(request):
+    all_categories = Category.objects.all()
+    context = {'all_categories':all_categories}
+    return render (request,'BlogApp/categories.html', context)

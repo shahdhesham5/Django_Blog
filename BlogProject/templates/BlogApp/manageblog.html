@@ -2,16 +2,36 @@
 {% load static %}
 
 {% block head %}
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <title>Manage blog</title>
+<link rel="stylesheet" href="{% static 'css/main.css' %}">
+<title>Manage blog</title>
 {% endblock %}
 
 {% block navbar %}
-    {% include 'BlogApp/navbar.html' %}
+{% include 'BlogApp/navbar.html' %}
 {% endblock %}
 
 {% block main %}
-    <h2>Manage blog</h2>
-    <a href="{% url 'showusers' %}"> showusers</a>
+<h2>Manage blog</h2>
+<ul class="col-4">
+    <div class="list-group">
+        <a href="{% url 'showusers' %}" class="list-group-item list-group-item-action" aria-current="true">
+            users
+        </a>
+        <a href="{% url 'posts' %}" class="list-group-item list-group-item-action">posts</a>
+        <a href="{% url 'categories' %}" class="list-group-item list-group-item-action">categories</a>
+        <a href="#" class="list-group-item list-group-item-action">A fourth link item</a>
+    </div>
+</ul>
 {% endblock %}
 
+<script>
+    var triggerTabList = [].slice.call(document.querySelectorAll('#myTab a'))
+    triggerTabList.forEach(function (triggerEl) {
+        var tabTrigger = new bootstrap.Tab(triggerEl)
+
+        triggerEl.addEventListener('click', function (event) {
+            event.preventDefault()
+            tabTrigger.show()
+        })
+    })
+</script>
