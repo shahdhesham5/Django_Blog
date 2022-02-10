@@ -12,7 +12,7 @@ class Post(models.Model):
     title = models.CharField(max_length = 50)
     content = models.CharField(max_length=500)
     created_on = models.DateTimeField(default=timezone.now)
-    post_img= models.ImageField(upload_to='images/', null=True)
+    post_img= models.ImageField(upload_to='images/')
     category = models.ForeignKey(Category,on_delete=models.CASCADE, default=None)
     
     def __str__(self):

@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
 from BlogApp.models import Category, Post
-from .forms import CreateUserForm,CategoryForm  #the modified UserCreationForm
+from .forms import CreateUserForm,CategoryForm,PostForm #the modified UserCreationForm
 #authentication
 from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm 
 from django.contrib import messages
@@ -117,33 +117,35 @@ def delectCat(request, cat_id):
 
 #show posts
 def posts(request):
-    all_posts = Posts.objects.all()
+    all_posts = Post.objects.all()
     context = {'all_posts':all_posts}
     return render (request,'BlogApp/posts.html', context)
 
 
 #addpost
 def addpost(request):
-     if request.method == 'POST': #if submited, check the inputs, validate form, then save
-        form = PostForm(request.POST)
-        all_posts = Posts.objects.all()
-        if request.POST in all_posts:
-            return HttpResponse("exists")
-        else:
-            form = PostForm(request.POST)
-            if form.is_valid():
-                form.save()
-                return redirect('posts')
-
+    if request.method == 'POST': #if submited, check the inputs, validate form, then save
+        form = PostForm(request.POST , request.FILES)
+        print(request.POST)
+        if form.is_valid():
+            print("is valid")
+            form.save()
+            return redirect('posts')
     else:
+        # form = PostForm(request.GET, initial={'user': request.user})
         form = PostForm()
         context = {'form': form}
+        print("get")
         return render (request, 'BlogApp/addpost.html', context)
+    # form = PostForm()
+    # user = request.user.username
+    # context = {'user': user, 'form': form}
+    # return render (request , 'BlogApp/addpost.html', context)
 
-
+    
 #delete post
-def delectpost(request, post_id):
-    post = Posts.objects.get(id=post_id)
+def deletepost(request, post_id):
+    post = Post.objects.get(id=post_id)
     post.delete()
     return redirect('posts')
 

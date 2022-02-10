@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-from .models import Category, Comment
+from .models import Category, Comment, Post
 #a modified UserCreationForm so we can add a new field(email)
 class CreateUserForm(UserCreationForm):
     class Meta:
@@ -11,7 +11,7 @@ class CreateUserForm(UserCreationForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ('__all__')
+        fields = ['user','title','content','post_img','category']
 
 class CommentForm(forms.ModelForm):
     class Meta:
