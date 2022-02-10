@@ -33,9 +33,7 @@ class Comment(models.Model):
 
 
 
-<<<<<<< HEAD
 
-<<<<<<< HEAD
 class Post(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     content = models.CharField(max_length=280)
@@ -43,8 +41,3 @@ class Post(models.Model):
     category = models.ForeignKey(Category,on_delete=models.CASCADE)
     def __str__(self):
         return self.text
-=======
-
-=======
->>>>>>> c412737e6ea25e813494d9e1b7f467cc49ebfd89
->>>>>>> dc77033043d6276e1dd8de5be9a38dbf8d0fac9c
