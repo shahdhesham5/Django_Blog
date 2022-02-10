@@ -1,5 +1,3 @@
-from contextvars import Context
-from multiprocessing import context
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
@@ -90,7 +88,7 @@ def home(request):
 
 #manageblog
 @login_required(login_url='login')
-@allowed_users(allowed_roles=['admin'])
+# @allowed_users(allowed_roles=['admin'])
 def manageBlog(request):
     return render(request,'BlogApp/manageblog.html')
 

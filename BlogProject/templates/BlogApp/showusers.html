@@ -17,7 +17,8 @@
             <th>id</th>
             <th>Username</th>
             <th>is admin</th>
-            <th>actions</th>
+            <th colspan="2">actions</th>
+        </tr>
         {% for user in users %}
             {% if request.user.username == user.username %}
                 <tr style="background-color: #d63031; color: wheat;">
@@ -25,27 +26,28 @@
                     <td>{{ user.username }}</td>
                     <td>{{ user.is_superuser }}</td>
                     <td></td>
+                    <td></td>
                 </tr>
             {% else %}
                 {% if not user.is_superuser %}
                 <tr>
                     <td>{{ user.id }}</td>
                     <td>{{ user.username }}</td>
-                    <td>{{ user.is_superuser }}</td>
-                    {% if user.username in blocked_users %}
-                    <td><a href="{% url 'blockuser' user.id %}">unblock</a></td>
-                    {% else %}
+                    <td>{{ user.is_superuser }}</td>   
                     <td><a href="{% url 'blockuser' user.id %}">block</a></td>
-                    {% endif %}
+                    <td><a href="{% url 'blockuser' user.id %}">makeadmin</a></td>
                 </tr>
                 {% else %}
+                <tr>
                     <td>{{ user.id }}</td>
                     <td>{{ user.username }}</td>
                     <td>{{ user.is_superuser }}</td>
                     <td></td>
+                    <td></td>
                 {% endif %}
+                </tr>
             {% endif %}
         {% endfor %}
-         </tr>
+
     </table>
 {% endblock %}
