@@ -1,23 +1,17 @@
-{% extends 'BlogApp/base.html' %}
+{% extends 'BlogApp/main.html' %}
 {% load static %}
 
-<html>
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <title>users</title>
+{% endblock %}
 
-<head>
-    <title>Home</title>
+{% block navbar %}
+    {% include 'BlogApp/navbar.html' %}
+{% endblock %}
 
-</head>
-
-<body >
-    {% block title_block %}
-    <div class="container">
-        
-        <h1>Users</h1>
-
-    {% endblock %}
-
-
-    {% block main_block %}
+{% block main %}
+    <h2>Users</h2>
     <table border="1" class="table mt-5">
         <tr>
             <th>Username</th>
@@ -31,9 +25,4 @@
         {% endfor %}
         </tr>
     </table>
-    </div>
-    {% endblock %}
-
-</body>
-
-</html>
+{% endblock %}

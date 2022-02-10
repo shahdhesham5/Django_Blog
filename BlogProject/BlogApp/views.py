@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from BlogApp.decorators import unauthenticated_user 
+from BlogApp.decorators import unauthenticated_user,allowed_users
 from .forms import CreateUserForm  #the modified UserCreationForm
 #authentication
 from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm 
@@ -44,22 +44,23 @@ def loginPage(request):
     return render(request, 'BlogApp/login.html', context)
 
 #logout
+#redirect to home-page after logout, as an AnonymousUser
 def logoutuser(request):
     logout(request)
-    return redirect('login')
+    return redirect('home')
 
 
 # Create your views here.
 #show admins and users
 @login_required(login_url='login')
-def showusers(request):
+@allowed_users(allowed_roles=['admin'])
+def showUsers(request):
     users = User.objects.all()
     context ={'users' : users}
     return render(request,'BlogApp/showusers.html', context)
 
 
 #home
-
 def home(request):
     return render(request, 'BlogApp/home.html')
 
@@ -67,3 +68,7 @@ def home(request):
 @login_required(login_url='login')
 def posts(request):
     return render(request, 'BlogApp/posts.html')
+
+#manageblog
+def manageBlog(request):
+    return render(request,'BlogApp/manageblog.html')

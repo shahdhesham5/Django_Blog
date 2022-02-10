@@ -1,0 +1,17 @@
+{% extends 'BlogApp/main.html' %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <title>Manage blog</title>
+{% endblock %}
+
+{% block navbar %}
+    {% include 'BlogApp/navbar.html' %}
+{% endblock %}
+
+{% block main %}
+    <h2>Manage blog</h2>
+    <a href="{% url 'showusers' %}"> showusers</a>
+{% endblock %}
+
