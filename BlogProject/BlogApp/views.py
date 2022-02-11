@@ -21,8 +21,8 @@ def register(request):
             user = form.save()
             username = form.cleaned_data.get('username')
             #assign the user to a group on creation
-            group = Group.objects.get(name='normaluser')
-            user.groups.add(group)
+            # group = Group.objects.get(name='normaluser')
+            # user.groups.add(group)
             messages.success(request, "Account created successfully for "+username)
             return redirect ('login')
     context = {'form':form}
