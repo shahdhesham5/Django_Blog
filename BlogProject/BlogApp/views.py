@@ -97,6 +97,7 @@ def blockUser(request,user_id):
     my_group.user_set.add(user)
     return redirect ('showusers')
 
+
     
 
 #unblock user
@@ -216,7 +217,7 @@ def deletepost(request, post_id):
     post.delete()
     return redirect('posts')
 
-
+#update post
 @login_required(login_url='login')
 def updatepost(request,post_id):
     x = Post.objects.get(id = post_id)
