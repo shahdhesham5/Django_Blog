@@ -3,12 +3,12 @@ from . import views
 
 urlpatterns = [
     path('home/', views.home, name = 'home'),
+    #posts
     path('posts/', views.posts, name='posts'),
     path('post/<post_id>', views.post, name='post'),
     path('delcomment/<post_id>/<comment_id>', views.deletecomment, name='delete-comment'),
     path('addpost/', views.addpost, name='addpost'),
     path('deletepost/<post_id>', views.deletepost, name='deletepost'),
-    path('postdetails/<post_id>', views.postdetails, name='postdetails'),
     path('updatepost/<post_id>', views.updatepost, name='updatepost'),
     # path('comment/<post_id>',views.addComment,name = "comment"),
     path('categories/', views.categories, name='categories'),

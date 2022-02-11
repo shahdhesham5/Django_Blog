@@ -186,23 +186,15 @@ def posts(request):
 def addpost(request):
     if request.method == 'POST': #if submited, check the inputs, validate form, then save
         form = PostForm(request.POST , request.FILES)
-        print(request.POST)
         if form.is_valid():
-            print("is valid")
             post = form.save(commit=False)
             post.user = request.user
             post.save()
             return redirect('posts')
     else:
-        # form = PostForm(request.GET, initial={'user': request.user})
         form = PostForm()
         context = {'form': form}
-        print("get")
         return render (request, 'BlogApp/addpost.html', context)
-    # form = PostForm()
-    # user = request.user.username
-    # context = {'user': user, 'form': form}
-    # return render (request , 'BlogApp/addpost.html', context)
 
     
 #delete post
@@ -240,26 +232,3 @@ def updatepost(request,post_id):
 
 #     Posts = Posts.objects.all()
 #     return render(request, 'BlogApp/posts.html',{"Posts":Posts})
-
-
-# def postdetails(request,post_id):
-#     post = Post.objects.filter(id = post_id).first()   
-#     comments = post.comment.all()
-#     return render(request,"postdetails.html",{"post":post,"comments":comments })
-
-#post details
-def postdetails(request,post_id):
-    post = Post.objects.filter(id = post_id).first()   
-    context = {"post":post} 
-    return render(request,"BlogApp/postdetails.html", context)
-
-
-# #add comment to post
-# def addComment(request,post_id):
-#     post = Post.objects.filter(id = post_id)
-#     if request.method == "POST":
-#         comment_info = request.POST.get("comment_info")
-#         newComment = Comment(comment_info = comment_info)
-#         newComment.post = post
-#         newComment.save()
-#     return redirect(reverse("postdetails.html"))
