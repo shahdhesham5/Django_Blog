@@ -10,7 +10,7 @@ class Category(models.Model):
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length = 50)
-    content = models.CharField(max_length=500)
+    content = models.CharField(max_length=1000)
     created_on = models.DateTimeField(default=timezone.now)
     post_img= models.ImageField(upload_to='images/')
     category = models.ForeignKey(Category,on_delete=models.CASCADE)
