@@ -71,8 +71,11 @@ def showUsers(request):
     context ={'users' : users, 'blocked_users':blocked_users}
     return render(request,'BlogApp/showusers.html', context)
 
-
-    
+#delete user
+def deleteUser(request, user_id):
+    user = User.objects.get(id = user_id)
+    user.delete()
+    return redirect('showusers')
 #makeadmin 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
@@ -164,8 +167,17 @@ def deletecomment(request,post_id, comment_id):
 def manageBlog(request):
     return render(request,'BlogApp/manageblog.html')
 
+#subscribe to a category
+def subscribe(request, cat_id):
+    category = Category.objects.get(id = cat_id)
 
 
+#enter category
+def enterCat(request, cat_id):
+    category = Category.objects.get(id = cat_id)
+    category_posts = Post.objects.filter(category_id=cat_id)
+    context ={'category': category, 'category_posts':category_posts}
+    return render (request, 'BlogApp/enterCategory.html', context)
 
 #show categories
 def categories(request):
@@ -200,6 +212,10 @@ def delectCat(request, cat_id):
     category = Category.objects.get(id=cat_id)
     category.delete()
     return redirect('categories')
+
+
+
+
 
 #show posts
 def posts(request):

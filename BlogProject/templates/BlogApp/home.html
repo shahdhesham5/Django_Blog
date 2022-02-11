@@ -13,11 +13,16 @@
     <h2><b>Home</b> </h2>
     <div class=" col-2">
         <h3>Categories</h3>
-        <ul class="list-group">
+            <table class="table" style="font-size: larger;"> 
             {% for category in all_categories %}
-            <li class="list-group-item" style="color: #2980b9;"><a href="{% url 'enter-category' category.id %}" style="text-decoration: none;">{{category.category}}</a></li>
+            <tr>
+                <td><a href="{% url 'enter-category' category.id %}" style="text-decoration: none;"><b>{{category.category}}</b> </a> </td>
+                <td><a href="#" style="text-decoration: none;">Subscribe</a></td>
+            </tr>
+            
             {% endfor %}
+            </table>
         </ul>
     </div>
-    <a href="{% url 'posts'  %}" style="text-decoration: none;">Posts</a>
 {% endblock %}
+
