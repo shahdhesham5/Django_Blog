@@ -17,7 +17,8 @@
             <th>id</th>
             <th>Username</th>
             <th>is admin</th>
-            <th>actions</th>
+            <th class="text-center">actions</th>
+            <th></th>
             </tr>
         {% for user in users %}
             {% if request.user.username == user.username %}
@@ -34,6 +35,7 @@
                     <td>{{ user.id }}</td>
                     <td>{{ user.username }}</td>
                     <td>{{ user.is_superuser }}</td>   
+                    <td><a href="{% url 'unblockuser' user.id %}">unblock</a></td>
                     <td><a href="{% url 'blockuser' user.id %}">block</a></td>
                     <td><a href="{% url 'makeadmin' user.id %}">makeadmin</a></td>
                 </tr>
@@ -46,6 +48,7 @@
                     <td></td>
                 </tr>
                 {% endif %}
+                </tr>
             {% endif %}
         {% endfor %}
     </table>

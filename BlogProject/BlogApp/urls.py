@@ -10,7 +10,9 @@ urlpatterns = [
     path('addpost/', views.addpost, name='addpost'),
     path('deletepost/<post_id>', views.deletepost, name='deletepost'),
     path('updatepost/<post_id>', views.updatepost, name='updatepost'),
-    # path('comment/<post_id>',views.addComment,name = "comment"),
+    #show category posts
+    path('enter-category/<cat_id>', views.enterCat, name='enter-category'),
+    #crud on categories
     path('categories/', views.categories, name='categories'),
     path('add-cat/', views.addCat, name='add-cat'),
     path('delete-cat/<cat_id>', views.delectCat, name='delete-cat'),
@@ -19,9 +21,11 @@ urlpatterns = [
     path('login/', views.loginPage, name='login'),
     path('logout/', views.logoutuser, name='logout'),
     path('manageblog/', views.manageBlog, name='manageblog'),
-    #users
+    #crud on users
+    path('blockuser/<user_id>', views.blockUser, name='blockuser'),
+    path('unblockuser/<user_id>', views.unblockUser, name='unblockuser'),
     path('showusers/', views.showUsers, name='showusers'),
     path('makadmin/<user_id>', views.makeadmin, name='makeadmin'),
-
-    path('blockuser/<user_id>', views.blockUser, name='blockuser'),
+    
+    
 ]
