@@ -1,0 +1,30 @@
+{% extends 'BlogApp/main.html' %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <title>{{category.category}}</title>
+{% endblock %}
+
+{% block navbar %}
+    {% include 'BlogApp/navbar.html' %}
+{% endblock %}
+
+{% block main %}
+    <h2><b>{{category.category}}</b> </h2>
+    {% for post in category_posts %}
+    <div class="col-8 m-5">
+        <div class="card" style="height:50vh; width: 80%;">
+            <div class="card-body">
+            <h5 class="card-title">{{post.title}}</h5>
+            <!-- <h5 class="card-title">{{post.category}}</h5>
+            <p class="card-text">{{post.content}}</p> -->
+            <p class="card-text"><small class="text-muted">{{post.created_on}}</small></p>
+            </div>
+            <img class="card-img-bottom" style="width: 100%" src="{{ MEDIA_URL }}/{{post.post_img}}" alt="Card image cap">
+
+        </div>
+    </div>
+        
+    {% endfor %}
+{% endblock %}

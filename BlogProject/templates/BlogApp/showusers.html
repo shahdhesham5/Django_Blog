@@ -17,13 +17,9 @@
             <th>id</th>
             <th>Username</th>
             <th>is admin</th>
-<<<<<<< HEAD
-            <th colspan="2">actions</th>
-        </tr>
-=======
-            <th>actions</th>
+            <th class="text-center">actions</th>
+            <th></th>
             </tr>
->>>>>>> 6bc8b7c048530c300cba3d6dce8a9044c1a89035
         {% for user in users %}
             {% if request.user.username == user.username %}
                 <tr style="background-color: #d63031; color: wheat;">
@@ -39,12 +35,9 @@
                     <td>{{ user.id }}</td>
                     <td>{{ user.username }}</td>
                     <td>{{ user.is_superuser }}</td>   
+                    <td><a href="{% url 'unblockuser' user.id %}">unblock</a></td>
                     <td><a href="{% url 'blockuser' user.id %}">block</a></td>
-<<<<<<< HEAD
-                    <td><a href="{% url 'blockuser' user.id %}">makeadmin</a></td>
-=======
                     <td><a href="{% url 'makeadmin' user.id %}">makeadmin</a></td>
->>>>>>> 6bc8b7c048530c300cba3d6dce8a9044c1a89035
                 </tr>
                 {% else %}
                 <tr>
@@ -53,17 +46,10 @@
                     <td>{{ user.is_superuser }}</td>
                     <td></td>
                     <td></td>
-<<<<<<< HEAD
-=======
                 </tr>
->>>>>>> 6bc8b7c048530c300cba3d6dce8a9044c1a89035
                 {% endif %}
                 </tr>
             {% endif %}
         {% endfor %}
-<<<<<<< HEAD
-
-=======
->>>>>>> 6bc8b7c048530c300cba3d6dce8a9044c1a89035
     </table>
 {% endblock %}

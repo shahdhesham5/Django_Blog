@@ -1,3 +1,4 @@
+from multiprocessing import context
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
@@ -9,7 +10,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group, User #User model to access users and admins
-
+ 
 #authentications
 #registration
 @unauthenticated_user
@@ -69,7 +70,10 @@ def showUsers(request):
     blocked_users = User.objects.filter(groups__name="blockedusers")
     context ={'users' : users, 'blocked_users':blocked_users}
     return render(request,'BlogApp/showusers.html', context)
-    #makeadmin 
+
+
+    
+#makeadmin 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def makeadmin(request, user_id):
@@ -78,8 +82,10 @@ def makeadmin(request, user_id):
     my_group.user_set.add(user)
     user.is_staff = True
     user.is_superuser = True
+    #if the user was blocked before, they will be unblocked
+    group = Group.objects.get(name='blockedusers') 
+    user.groups.remove(group)
     user.save()
-
     return redirect('showusers')
 
 
@@ -92,6 +98,16 @@ def blockUser(request,user_id):
     return redirect ('showusers')
 
     
+
+#unblock user
+def unblockUser(request, user_id):
+    user = User.objects.get(id = user_id)
+    group = Group.objects.get(name = "blockedusers")
+    user.groups.remove(group)
+    return redirect ('showusers')
+
+
+
 
 #home
 def home(request):
@@ -188,3 +204,11 @@ def deletepost(request, post_id):
 
 #     Posts = Posts.objects.all()
 #     return render(request, 'BlogApp/posts.html',{"Posts":Posts})
+
+
+#enter category
+def enterCat(request, cat_id):
+    category = Category.objects.get(id = cat_id)
+    category_posts = Post.objects.filter(category_id=cat_id)
+    context ={'category': category, 'category_posts':category_posts}
+    return render (request, 'BlogApp/enterCategory.html', context)
