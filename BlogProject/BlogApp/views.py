@@ -1,6 +1,5 @@
-from multiprocessing import context
-from django.http import HttpResponse 
-from django.shortcuts import render,redirect ,get_object_or_404
+from django.http import HttpResponse
+from django.shortcuts import render,redirect
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
 from BlogApp.models import Category, Post , Comment
 from .forms import CommentForm, CreateUserForm,CategoryForm,PostForm #the modified UserCreationForm
@@ -241,7 +240,7 @@ def updatepost(request,post_id):
             post.user = request.user
             post.save()
             messages.success(request,"The post has been successfully updated")
-            return redirect('posts')
+            return redirect('post', post_id=post_id)
     else:
         form = PostForm(instance = x)
         context = {"form":form}
