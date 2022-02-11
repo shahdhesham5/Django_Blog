@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
 from BlogApp.models import Category, Post , Comment
 from .forms import CommentForm, CreateUserForm,CategoryForm,PostForm #the modified UserCreationForm
@@ -22,8 +22,8 @@ def register(request):
             user = form.save()
             username = form.cleaned_data.get('username')
             #assign the user to a group on creation
-            group = Group.objects.get(name='normaluser')
-            user.groups.add(group)
+            # group = Group.objects.get(name='normaluser')
+            # user.groups.add(group)
             messages.success(request, "Account created successfully for "+username)
             return redirect ('login')
     context = {'form':form}
@@ -122,10 +122,8 @@ def home(request):
 #Post details
 def post(request,post_id):
     post = Post.objects.get(id = post_id)
-    y = get_object_or_404(Post, id= post_id)
+    #geting total likes
     totallikes = post.total_likes()
-    print(totallikes)
-    # context = { 'totallikes' : totallikes}
     # if adding comment
     if request.method == "POST":
         form = CommentForm(request.POST , request.FILES)
@@ -137,10 +135,10 @@ def post(request,post_id):
     # show comments again after adding comment
     comments = Comment.objects.filter(post = post_id)
     form = CommentForm()
-    context = {'post': post, 'comments': comments, 'form': form , 'totallikes' : totallikes}
+    context = {'post': post, 'comments': comments, 'form': form, 'totallikes':totallikes } 
     return render(request, 'BlogApp/post.html', context)
 
-#likes
+#Post likes
 @login_required(login_url='login')
 def likepost(request, post_id):
     post = get_object_or_404(Post, id=request.POST.get('post_id'))
@@ -156,11 +154,6 @@ def deletecomment(request,post_id, comment_id):
     
 
     
-#posts
-# @login_required(login_url='login')
-# def posts(request):
-#     return render(request, 'BlogApp/posts.html')
-
 #manageblog
 @login_required(login_url='login')
 # @allowed_users(allowed_roles=['admin'])
