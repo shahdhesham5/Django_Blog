@@ -51,7 +51,9 @@
         <button type="reset" class="btn btn-danger">cancel</button>
     </form>
     <!-- Add Comment button -->
-    <button class="btn btn-primary col-2 " id="button" onclick="addComment()">Add Comment</button>
+    {% if not request.user.is_anonymous %}
+        <button class="btn btn-primary col-2 " id="button" onclick="addComment()">Add Comment</button>
+    {% endif %}
     <!-- Script file for showing and hiding CommentForm-->
     <script>
         function addComment() {
