@@ -13,19 +13,41 @@
 <div class="row postDiv">
     <!-- ShowPost detials -->
     <div class="col-12 ">
-        <div class="card">
-            <h1 class="card-title" style="text-align: center;">{{post.title}}</h1>
+        <div class="card" style="border: none;">
+            <div style="display: inline-block; text-align: center;">
+                <h1 class="card-title" style="text-align: center; display: inline;">{{post.title}}</h1>
+                {% if post.user == request.user or user.is_superuser %}
+                <a type="button" class="btn btn-light" style="display: inline; float: right; clear: right;"
+                    href="{% url 'updatepost' post.id %}"> Update Post</a>
+                {% endif %}
+            </div>
+            <hr>
+            <div class="Post" id="Post" style="display: flex; justify-content: space-between; width: 100%; padding: 0 2% ;">
+                <div style="width:55%; text-align: justify;" id="content">
+                    <p class="card-text">{{post.content}}</p>
+                    <small class="card-text" style="float: right; clear: right;">{{post.created_on}}</small>
+
+                </div>
+                <div style="width: 40%; display: flex; justify-content: center;
+                flex-direction: column;" id="imgDiv">
+                    <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                        <img src="{{ MEDIA_URL }}/{{post.post_img}}"id="img" class="img-fluid" style="width: 100%;" />
+                        <a href="#!">
+                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                        </a>
+                    </div>
+                </div>
+
+
+            </div>
+
+
             <div class="card-body">
-                <p class="card-text">{{post.content}}</p>
-                <p class="card-text">{{post.created_on}}</p>
+
+
                 <p class="card-text">{{post.caregory}}</p>
             </div>
-            <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
-                <img src="{{ MEDIA_URL }}/{{post.post_img}}" class="img-fluid" />
-                <a href="#!">
-                    <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
-                </a>
-            </div>
+
         </div>
     </div>
     <!-- Comments of this Post-->
@@ -35,13 +57,15 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">{{comment.user}}</h5>
-               <small class="card-title">{{comment.created_on}}<small>
-                <p class="card-text">{{comment.comment_info}}</p>
-                <!-- if the comment is written by user or the user is admin -->
-                <!-- he/she can delete this comment-->
-                {% if post.user == request.user or user.is_superuser %}
-                <a type="button" class="btn-close" href="{% url 'delete-comment' post_id=post.id comment_id=comment.id %}" aria-label="Close"></a>
-                {% endif %}
+                <small class="card-title">{{comment.created_on}}<small>
+                        <p class="card-text">{{comment.comment_info}}</p>
+                        <!-- if the comment is written by user or the user is admin -->
+                        <!-- he/she can delete this comment-->
+                        {% if comment.user == request.user or user.is_superuser %}
+                        <a type="button" class="btn-close"
+                            href="{% url 'delete-comment' post_id=post.id comment_id=comment.id %}"
+                            aria-label="Close"></a>
+                        {% endif %}
             </div>
         </div>
     </div>
@@ -54,7 +78,7 @@
     </form>
     <!-- Add Comment button -->
     {% if not request.user.is_anonymous %}
-        <button class="btn btn-primary col-2 " id="button" onclick="addComment()">Add Comment</button>
+    <button class="btn btn-primary col-2 " id="button" onclick="addComment()">Add Comment</button>
     {% endif %}
     <!-- Script file for showing and hiding CommentForm-->
     <script>
@@ -71,6 +95,17 @@
             }
         }
 
+        var img = document.getElementById("img")
+        var post = document.getElementById("Post")
+        var content = document.getElementById("content")
+        var imgDiv = document.getElementById("imgDiv")
+        console.log(img.scrollHeight)
+        console.log(img.scrollWidth)
+        if (img.scrollHeight < img.scrollWidth){
+            post.style.flexDirection ="column"
+            content.style.width="100%"
+            imgDiv.style.width="100%"
+        }
     </script>
     <!-- end Script-->
     {% endblock %}
