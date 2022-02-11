@@ -3,8 +3,9 @@ from multiprocessing import context
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
-from BlogApp.models import Category, Post
+from BlogApp.models import Category, Post , Comment
 from .forms import CreateUserForm,CategoryForm,PostForm #the modified UserCreationForm
+from django.shortcuts import get_object_or_404
 #authentication
 from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm 
 from django.contrib import messages
@@ -163,6 +164,23 @@ def deletepost(request, post_id):
     return redirect('posts')
 
 
+@login_required(login_url='login')
+def updatepost(request,post_id):
+    x = Post.objects.get(id = post_id)
+    if request.method ==  'POST' :
+        form = PostForm(request.POST ,request.FILES ,instance = x)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.user = request.user
+            post.save()
+            messages.success(request,"The post has been successfully updated")
+            return redirect('posts')
+    else:
+        form = PostForm(instance = x)
+        context = {"form":form}
+        return render(request,"BlogApp/updatepost.html",context)
+
+
 
 #searchforPosts
 # @login_required(login_url='login')
@@ -174,3 +192,26 @@ def deletepost(request, post_id):
 
 #     Posts = Posts.objects.all()
 #     return render(request, 'BlogApp/posts.html',{"Posts":Posts})
+
+
+# def postdetails(request,post_id):
+#     post = Post.objects.filter(id = post_id).first()   
+#     comments = post.comment.all()
+#     return render(request,"postdetails.html",{"post":post,"comments":comments })
+
+#post details
+def postdetails(request,post_id):
+    post = Post.objects.filter(id = post_id).first()   
+    context = {"post":post} 
+    return render(request,"BlogApp/postdetails.html", context)
+
+
+# #add comment to post
+# def addComment(request,post_id):
+#     post = Post.objects.filter(id = post_id)
+#     if request.method == "POST":
+#         comment_info = request.POST.get("comment_info")
+#         newComment = Comment(comment_info = comment_info)
+#         newComment.post = post
+#         newComment.save()
+#     return redirect(reverse("postdetails.html"))
