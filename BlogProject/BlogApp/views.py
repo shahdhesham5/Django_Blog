@@ -1,6 +1,6 @@
 from multiprocessing import context
-from django.http import HttpResponse
-from django.shortcuts import render,redirect
+from django.http import HttpResponse 
+from django.shortcuts import render,redirect ,get_object_or_404
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
 from BlogApp.models import Category, Post , Comment
 from .forms import CommentForm, CreateUserForm,CategoryForm,PostForm #the modified UserCreationForm
@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group, User #User model to access users and admins
+
  
 #authentications
 #registration
@@ -119,6 +120,10 @@ def home(request):
 #Post details
 def post(request,post_id):
     post = Post.objects.get(id = post_id)
+    y = get_object_or_404(Post, id= post_id)
+    totallikes = post.total_likes()
+    print(totallikes)
+    # context = { 'totallikes' : totallikes}
     # if adding comment
     if request.method == "POST":
         form = CommentForm(request.POST , request.FILES)
@@ -130,8 +135,16 @@ def post(request,post_id):
     # show comments again after adding comment
     comments = Comment.objects.filter(post = post_id)
     form = CommentForm()
-    context = {'post': post, 'comments': comments, 'form': form}
+    context = {'post': post, 'comments': comments, 'form': form , 'totallikes' : totallikes}
     return render(request, 'BlogApp/post.html', context)
+
+#likes
+@login_required(login_url='login')
+def likepost(request, post_id):
+    post = get_object_or_404(Post, id=request.POST.get('post_id'))
+    post.likes.add(request.user)
+    return redirect('post',post_id=post_id)
+
 
 # delet comment from spcefic post
 def deletecomment(request,post_id, comment_id):
@@ -254,3 +267,5 @@ def enterCat(request, cat_id):
     category_posts = Post.objects.filter(category_id=cat_id)
     context ={'category': category, 'category_posts':category_posts}
     return render (request, 'BlogApp/enterCategory.html', context)
+
+    
