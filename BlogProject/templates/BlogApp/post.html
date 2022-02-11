@@ -87,15 +87,13 @@
     <!-- Add Comment button -->
     {% if not request.user.is_anonymous %}
     <button class="btn btn-primary col-2 " id="button" onclick="addComment()">Add Comment</button>
-    {% endif %}
-    
      <!-- like Form if the user need to add a like-->
-     
-     <form method="POST" action="{% url 'likepost' post.id %}">
+    <form method="POST" action="{% url 'likepost' post.id %}">
         {% csrf_token %}
         <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-primary">Like</button>
         {{ totallikes }}
     </form>
+    {% endif %}
     
     <!-- Script file for showing and hiding CommentForm -->
     <script>
