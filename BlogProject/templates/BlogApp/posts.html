@@ -11,19 +11,38 @@
 {% endblock %}
 
 {% block main %}
-    {% for post in all_posts %}
-    <div class="col-8 m-5">
-        <div class="card" style="height:50vh; width: 80%;">
-            <div class="card-body">
-            <h5 class="card-title">{{post.title}}</h5>
-            <!-- <h5 class="card-title">{{post.category}}</h5>
-            <p class="card-text">{{post.content}}</p> -->
-            <p class="card-text"><small class="text-muted">{{post.created_on}}</small></p>
+    <div class="row"> {% for post in all_posts %}
+   
+        <div class="col-md-6 col-sm-12 ">
+            <div class="card">
+              <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                <a href="{% url 'post' post.id %}">
+                <img src="{{ MEDIA_URL }}/{{post.post_img}}" class="img-fluid" style="width:  100%;
+                height: 300px;
+                background-size: cover;"/> </a>
+                <a href="#!">
+                  <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                </a>
+              </div>
+              <div class="card-body">
+                <h5 class="card-title">{{post.title}}</h5>
+                <p class="card-text" style="white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;  ">
+                  {{post.content}}
+                </p>
+                <div  class="text-center">
+                    {% if post.user == request.user or  user.is_superuser %}
+                    <a class="btn btn-info " href="{% url 'deletepost' post.id %}">Delete</a>
+                    <a class="btn btn-info col-2" href="{% url 'updatepost' post.id %}">Update</a>
+                    {% endif %}
+
+                </div>
+              </div>
             </div>
-            <img class="card-img-bottom" style="width: 100%" src="{{ MEDIA_URL }}/{{post.post_img}}" alt="Card image cap">
-            <a class="btn btn-info col-2" href="{% url 'delete-post' post.id %}">delete</a>
         </div>
     </div>
         
     {% endfor %}
+</div>
 {% endblock %}

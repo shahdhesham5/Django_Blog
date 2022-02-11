@@ -11,12 +11,12 @@ class CreateUserForm(UserCreationForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['user','title','content','post_img','category']
+        fields = ['title','content','post_img','category']
 
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ['user','comment_info']
+        fields = ['comment_info']
 
 #a form to add a category
 class CategoryForm(forms.ModelForm):
