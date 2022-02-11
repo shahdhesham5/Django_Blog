@@ -4,7 +4,7 @@ from django.utils import timezone
 
 class Category(models.Model):
     category = models.CharField(max_length=20)
-    def _str_(self):
+    def __str__(self):
         return self.category
 
 class Post(models.Model):
@@ -14,7 +14,7 @@ class Post(models.Model):
     created_on = models.DateTimeField(default=timezone.now)
     post_img= models.ImageField(upload_to='images/')
     category = models.ForeignKey(Category,on_delete=models.CASCADE, default=None)
-    def _str_(self):
+    def __str__(self):
         return self.title      
 
     class Meta:
@@ -23,7 +23,7 @@ class Post(models.Model):
 class Tag(models.Model):
     tag = models.CharField(max_length=20)
     post = models.ManyToManyField(Post)
-    def _str_(self):
+    def __str__(self):
         return self.tag    
 
 class Comment(models.Model):
