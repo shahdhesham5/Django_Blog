@@ -16,7 +16,7 @@ class PostForm(forms.ModelForm):
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ['user','comment_info']
+        fields = ['comment_info']
 
 #a form to add a category
 class CategoryForm(forms.ModelForm):

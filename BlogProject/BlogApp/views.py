@@ -1,11 +1,11 @@
+from audioop import reverse
 from contextvars import Context
 from multiprocessing import context
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
 from BlogApp.models import Category, Post , Comment
-from .forms import CreateUserForm,CategoryForm,PostForm #the modified UserCreationForm
-from django.shortcuts import get_object_or_404
+from .forms import CommentForm, CreateUserForm,CategoryForm,PostForm #the modified UserCreationForm
 #authentication
 from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm 
 from django.contrib import messages
@@ -72,6 +72,19 @@ def showUsers(request):
     blocked_users = User.objects.filter(groups__name="blockedusers")
     context ={'users' : users, 'blocked_users':blocked_users}
     return render(request,'BlogApp/showusers.html', context)
+    #makeadmin 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def makeadmin(request, user_id):
+    user=User.objects.get(id= user_id)
+    my_group=Group.objects.get(name="admin")
+    my_group.user_set.add(user)
+    user.is_staff = True
+    user.is_superuser = True
+    user.save()
+
+    return redirect('showusers')
+
 
 
 #block user
@@ -89,11 +102,44 @@ def home(request):
     context = {'all_categories':all_categories}
     return render(request, 'BlogApp/home.html',context)
 
+#Post details
+def post(request,post_id):
+    post = Post.objects.get(id = post_id)
+    # if adding comment
+    if request.method == "POST":
+        form = CommentForm(request.POST , request.FILES)
+        if form.is_valid():
+            comment = form.save(commit=False) # to insert the ForeignKey of post and user before saving comment
+            comment.user = request.user
+            comment.post = post
+            comment.save()
+    # show comments again after adding comment
+    comments = Comment.objects.filter(post = post_id)
+    form = CommentForm()
+    context = {'post': post, 'comments': comments, 'form': form}
+    return render(request, 'BlogApp/post.html', context)
+
+# delet comment from spcefic post
+def deletecomment(request,post_id, comment_id):
+    comment = Comment.objects.get(id = comment_id)
+    comment.delete()
+    return redirect('post',post_id=post_id) # redirct to post view with this parameter
+    
+
+    
+#posts
+# @login_required(login_url='login')
+# def posts(request):
+#     return render(request, 'BlogApp/posts.html')
+
 #manageblog
 @login_required(login_url='login')
-@allowed_users(allowed_roles=['admin'])
+# @allowed_users(allowed_roles=['admin'])
 def manageBlog(request):
     return render(request,'BlogApp/manageblog.html')
+
+
+
 
 #show categories
 def categories(request):
@@ -143,7 +189,9 @@ def addpost(request):
         print(request.POST)
         if form.is_valid():
             print("is valid")
-            form.save()
+            post = form.save(commit=False)
+            post.user = request.user
+            post.save()
             return redirect('posts')
     else:
         # form = PostForm(request.GET, initial={'user': request.user})

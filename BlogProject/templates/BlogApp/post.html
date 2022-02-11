@@ -1,0 +1,72 @@
+{% extends 'BlogApp/main.html' %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/postDiv.css' %}">
+
+{% endblock %}
+{% block navbar %}
+{% include 'BlogApp/navbar.html' %}
+{% endblock %}
+
+{% block main %}
+
+<div class="row postDiv">
+    <!-- ShowPost detials -->
+    <div class="col-12 ">
+        <div class="card">
+            <h1 class="card-title" style="text-align: center;">{{post.title}}</h1>
+            <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                <img src="{{ MEDIA_URL }}/{{post.post_img}}" class="img-fluid" />
+                <a href="#!">
+                    <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                </a>
+            </div>
+            <div class="card-body">
+                <p class="card-text">{{post.content}}</p>
+                <p class="card-text">{{post.created_on}}</p>
+                <p class="card-text">{{post.caregory}}</p>
+            </div>
+        </div>
+    </div>
+    <!-- Comments of this Post-->
+    {% for comment in comments %}
+    <div class="col-12 ">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{comment.user}}</h5>
+                <p class="card-text">{{comment.comment_info}}</p>
+                <!-- if the comment is written by user or the user is admin -->
+                <!-- he/she can delete this comment-->
+                {% if post.user == request.user or user.is_superuser %}
+                <a type="button" class="btn-close" href="{% url 'delete-comment' post_id=post.id comment_id=comment.id %}" aria-label="Close"></a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <!-- Comment Form if the user need to add a comment-->
+    <form method="POST" enctype="multipart/form-data" style="display: none;" id="form"> {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">submit</button>
+        <button type="reset" class="btn btn-danger">cancel</button>
+    </form>
+    <!-- Add Comment button -->
+    <button class="btn btn-primary col-2 " id="button" onclick="addComment()">Add Comment</button>
+    <!-- Script file for showing and hiding CommentForm-->
+    <script>
+        function addComment() {
+            console.log("sss")
+            var form = document.getElementById("form")
+            var button = document.getElementById("button")
+            if (form.style.display === "none") {
+                form.style.display = "block"
+                button.style.display = "none"
+            } else {
+                form.style.display = "none"
+                button.style.display = "block"
+            }
+        }
+
+    </script>
+    <!-- end Script-->
+    {% endblock %}

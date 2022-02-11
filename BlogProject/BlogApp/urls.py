@@ -4,6 +4,8 @@ from . import views
 urlpatterns = [
     path('home/', views.home, name = 'home'),
     path('posts/', views.posts, name='posts'),
+    path('post/<post_id>', views.post, name='post'),
+    path('delcomment/<post_id>/<comment_id>', views.deletecomment, name='delete-comment'),
     path('addpost/', views.addpost, name='addpost'),
     path('deletepost/<post_id>', views.deletepost, name='deletepost'),
     path('postdetails/<post_id>', views.postdetails, name='postdetails'),
@@ -19,5 +21,7 @@ urlpatterns = [
     path('manageblog/', views.manageBlog, name='manageblog'),
     #users
     path('showusers/', views.showUsers, name='showusers'),
+    path('makadmin/<user_id>', views.makeadmin, name='makeadmin'),
+
     path('blockuser/<user_id>', views.blockUser, name='blockuser'),
 ]
