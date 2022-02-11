@@ -4,7 +4,7 @@ from multiprocessing import context
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
-from BlogApp.models import Category, Comment, Post
+from BlogApp.models import Category, Post , Comment
 from .forms import CommentForm, CreateUserForm,CategoryForm,PostForm #the modified UserCreationForm
 #authentication
 from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm 
@@ -186,23 +186,15 @@ def posts(request):
 def addpost(request):
     if request.method == 'POST': #if submited, check the inputs, validate form, then save
         form = PostForm(request.POST , request.FILES)
-        print(request.POST)
         if form.is_valid():
-            print("is valid")
             post = form.save(commit=False)
             post.user = request.user
             post.save()
             return redirect('posts')
     else:
-        # form = PostForm(request.GET, initial={'user': request.user})
         form = PostForm()
         context = {'form': form}
-        print("get")
         return render (request, 'BlogApp/addpost.html', context)
-    # form = PostForm()
-    # user = request.user.username
-    # context = {'user': user, 'form': form}
-    # return render (request , 'BlogApp/addpost.html', context)
 
     
 #delete post
@@ -210,6 +202,23 @@ def deletepost(request, post_id):
     post = Post.objects.get(id=post_id)
     post.delete()
     return redirect('posts')
+
+
+@login_required(login_url='login')
+def updatepost(request,post_id):
+    x = Post.objects.get(id = post_id)
+    if request.method ==  'POST' :
+        form = PostForm(request.POST ,request.FILES ,instance = x)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.user = request.user
+            post.save()
+            messages.success(request,"The post has been successfully updated")
+            return redirect('posts')
+    else:
+        form = PostForm(instance = x)
+        context = {"form":form}
+        return render(request,"BlogApp/updatepost.html",context)
 
 
 
