@@ -15,25 +15,27 @@
     <div class="col-12 ">
         <div class="card">
             <h1 class="card-title" style="text-align: center;">{{post.title}}</h1>
+            <div class="card-body">
+                <p class="card-text">{{post.content}}</p>
+                <p class="card-text">{{post.created_on}}</p>
+                <p class="card-text">{{post.caregory}}</p>
+            </div>
             <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
                 <img src="{{ MEDIA_URL }}/{{post.post_img}}" class="img-fluid" />
                 <a href="#!">
                     <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
                 </a>
             </div>
-            <div class="card-body">
-                <p class="card-text">{{post.content}}</p>
-                <p class="card-text">{{post.created_on}}</p>
-                <p class="card-text">{{post.caregory}}</p>
-            </div>
         </div>
     </div>
     <!-- Comments of this Post-->
+    <h6>Comments {% if comments %}{{comments.count }} {% endif %}</h6>
     {% for comment in comments %}
     <div class="col-12 ">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">{{comment.user}}</h5>
+               <small class="card-title">{{comment.created_on}}<small>
                 <p class="card-text">{{comment.comment_info}}</p>
                 <!-- if the comment is written by user or the user is admin -->
                 <!-- he/she can delete this comment-->
