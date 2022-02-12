@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block head %}
-    <title>Posts</title>
+    <title>Add Category</title>
 {% endblock %}
 
 {% block navbar %}
@@ -10,8 +10,11 @@
 {% endblock %}
 
 {% block main %}
-    <div class="row"> {% for post in all_posts %}
-   
+    {% if noResult %}
+    <h1> No Reuslt</h1>
+    {% else %}
+    <h2><b>Search results:</b> </h2>
+    <div class="row"> {% for post in posts %}
         <div class="col-md-6 col-lg-4 col-sm-12 ">
             <div class="card mb-4" style="background: rgba(233, 233, 233, 0.322); ">
               
@@ -47,4 +50,5 @@
           </div>
     {% endfor %}
 </div>
+{% endif %}
 {% endblock %}

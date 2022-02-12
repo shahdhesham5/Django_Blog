@@ -1,3 +1,4 @@
+from this import s
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
@@ -442,3 +443,26 @@ def delFword(request, fword_id):
 
 
     
+def search(request):
+    searchResults = Post.objects.none()
+    if request.method == "POST":
+        selected = request.POST.get("selected")
+        posts = Post.objects.all()
+        tags = Tag.objects.all()
+        
+        for tag in tags:
+            if selected in tag.tag_item:
+                sel = Post.objects.filter(tag=tag)
+                searchResults = searchResults | sel
+        for post in posts:
+            if selected in post.title:
+                sel = Post.objects.filter(title=post.title)
+                searchResults = searchResults | sel
+        if not searchResults:
+            context = {'noResult': True, 'searchValue': selected}
+        else:
+            context = {'posts': searchResults, 'searchValue': selected}
+        return render(request,  'BlogApp/search.html', context)
+    else:
+        context = {'noResult': True}
+        return render(request,  'BlogApp/search.html', context)
