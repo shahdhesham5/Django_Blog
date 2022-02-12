@@ -124,6 +124,7 @@ def post(request,post_id):
     post = Post.objects.get(id = post_id)
     #geting total likes
     totallikes = post.total_likes()
+
     # if adding comment
     if request.method == "POST":
         form = CommentForm(request.POST , request.FILES)
@@ -328,11 +329,11 @@ def fwords(request):
 @allowed_users(allowed_roles=['admin'])
 def addFword(request):
     if request.method == 'POST': #if submited, check the inputs, validate form, then save
-        input = request.POST.get("fword") #getting the category the customer trying to add
+        input = request.POST.get("fword") #getting the word the customer trying to add
         try:    
-            x = Fwords.objects.get(fword=input) #if category already exists
+            x = Fwords.objects.get(fword=input) #if  already exists
             messages.info(request, 'it is already exists')
-            return redirect('addfword')
+            return redirect('add-fword')
         except:
             form = FwordsForm(request.POST)
             if form.is_valid():
