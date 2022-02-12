@@ -7,6 +7,15 @@ class Category(models.Model):
     def __str__(self):
         return self.category
 
+class Tag(models.Model):
+    tag_item = models.CharField(max_length=20, default=None)
+    def __str__(self):
+        return self.tag_item   
+class Fwords(models.Model):
+    fword = models.CharField(max_length=20)
+    def __str__(self):
+        return self.fword
+
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length = 50)
@@ -14,24 +23,17 @@ class Post(models.Model):
     created_on = models.DateTimeField(default=timezone.now)
     post_img= models.ImageField(upload_to='images/')
     category = models.ForeignKey(Category,on_delete=models.CASCADE)
+    tag = models.ManyToManyField(Tag ,related_name='tags', default=None)
     likes = models.ManyToManyField(User , related_name='blog_like')
-
 
     def total_likes(self):
         return self.likes.count()
-
         
     def __str__(self):
         return self.title      
 
     class Meta:
         ordering = ('title',)
-
-class Tag(models.Model):
-    tag = models.CharField(max_length=20)
-    post = models.ManyToManyField(Post)
-    def __str__(self):
-        return self.tag    
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)

@@ -1,10 +1,10 @@
 from django.http import HttpResponse
 from django.shortcuts import render,redirect,get_object_or_404
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
-from BlogApp.models import Category, Post , Comment, Subscribers
-from .forms import CommentForm, CreateUserForm,CategoryForm,PostForm #the modified UserCreationForm
+from BlogApp.models import Category, Post , Comment, Fwords, Tag, Subscribers
+from .forms import CommentForm, CreateUserForm,CategoryForm, FwordsForm,PostForm ,  TagForm#the modified UserCreationForm
 #authentication
-from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm 
+from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -36,10 +36,10 @@ def loginPage(request):
         #gather the username and the password entered on the login form
         username = request.POST.get('username')
         password = request.POST.get('password')
-        
+
         #authenticate the data entered by the user
         user = authenticate(request, username=username, password=password)
-        #if the user exists 
+        #if the user exists
         if user is not None:
             #check if blocked
             if user.groups.filter(name='blockedusers'):
@@ -47,7 +47,7 @@ def loginPage(request):
             #if not blocked
             login(request, user)
             return redirect('home')
-        #if not, show this flash message 
+        #if not, show this flash message
         else:
             messages.info(request, 'Username or Password is incorrect')
     #displaying the loging form
@@ -86,7 +86,7 @@ def makeadmin(request, user_id):
     user.is_staff = True
     user.is_superuser = True
     #if the user was blocked before, they will be unblocked
-    group = Group.objects.get(name='blockedusers') 
+    group = Group.objects.get(name='blockedusers')
     user.groups.remove(group)
     user.save()
     return redirect('showusers')
@@ -131,7 +131,8 @@ def post(request,post_id):
     # show comments again after adding comment
     comments = Comment.objects.filter(post = post_id)
     form = CommentForm()
-    context = {'post': post, 'comments': comments, 'form': form, 'totallikes':totallikes } 
+    tags = Tag.objects.filter(tags__id=post_id )
+    context = {'post': post, 'comments': comments, 'form': form, 'totallikes':totallikes , 'tags':tags, 'form': form} 
     return render(request, 'BlogApp/post.html', context)
 
 #Post likes
@@ -147,9 +148,14 @@ def deletecomment(request,post_id, comment_id):
     comment = Comment.objects.get(id = comment_id)
     comment.delete()
     return redirect('post',post_id=post_id) # redirct to post view with this parameter
-    
 
-    
+
+
+#posts
+# @login_required(login_url='login')
+# def posts(request):
+#     return render(request, 'BlogApp/posts.html')
+
 #manageblog
 @login_required(login_url='login')
 # @allowed_users(allowed_roles=['admin'])
@@ -195,7 +201,7 @@ def enterCat(request, cat_id):
 def addCat(request):
     if request.method == 'POST': #if submited, check the inputs, validate form, then save
         input = request.POST.get("category") #getting the category the customer trying to add
-        try:    
+        try:
             x = Category.objects.get(category=input) #if category already exists
             messages.info(request, 'Category already exists')
             return redirect('add-cat')
@@ -204,7 +210,7 @@ def addCat(request):
             if form.is_valid():
                 form.save()
                 return redirect('categories')
-                
+
     else:
         form = CategoryForm()
         context = {'form': form}
@@ -232,17 +238,31 @@ def posts(request):
 def addpost(request):
     if request.method == 'POST': #if submited, check the inputs, validate form, then save
         form = PostForm(request.POST , request.FILES)
-        if form.is_valid():
+        form2 = TagForm(request.POST)
+        if form.is_valid() and form2.is_valid():
             post = form.save(commit=False)
             post.user = request.user
+            postTags= form.cleaned_data['tag']
+            for tag in postTags:
+                tag_item = Tag.objects.get(tag_item= tag)
+                post.save()
+                post.tag.add(tag)
+            tagsArray = form2.cleaned_data['tag_item']
+            tags = tagsArray.split(",")
+            for tag in tags:
+                tag_item = Tag.objects.create(tag_item= tag)
+                tag_item.save()
+                post.save()
+                post.tag.add(tag_item)
             post.save()
             return redirect('posts')
     else:
         form = PostForm()
-        context = {'form': form}
+        form2 = TagForm()
+        context = {'form': form, 'form2': form2}
         return render (request, 'BlogApp/addpost.html', context)
 
-    
+
 #delete post
 def deletepost(request, post_id):
     post = Post.objects.get(id=post_id)
@@ -252,18 +272,38 @@ def deletepost(request, post_id):
 #update post
 @login_required(login_url='login')
 def updatepost(request,post_id):
-    x = Post.objects.get(id = post_id)
+    postSelected = Post.objects.get(id = post_id)
     if request.method ==  'POST' :
-        form = PostForm(request.POST ,request.FILES ,instance = x)
+        form = PostForm(request.POST ,request.FILES ,instance = postSelected)
+        form2 = TagForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
+
             post.user = request.user
+            post.save()
+            post.tag.clear()
+            post.save()
+            postTags= form.cleaned_data['tag']
+            for tag in postTags:
+                tag_item = Tag.objects.get(tag_item= tag)
+                post.save()
+                post.tag.add(tag)
+
+            if form2.is_valid():
+                tagsArray = form2.cleaned_data['tag_item']
+                tags = tagsArray.split(",")
+                for tag in tags:
+                    tag_item = Tag.objects.create(tag_item= tag)
+                    tag_item.save()
+                    post.save()
+                    post.tag.add(tag_item)
             post.save()
             messages.success(request,"The post has been successfully updated")
             return redirect('post', post_id=post_id)
     else:
-        form = PostForm(instance = x)
-        context = {"form":form}
+        form = PostForm(instance = postSelected)
+        form2 = TagForm()
+        context = {'form': form, 'form2': form2}
         return render(request,"BlogApp/updatepost.html",context)
 
 
@@ -287,4 +327,38 @@ def enterCat(request, cat_id):
     context ={'category': category, 'category_posts':category_posts}
     return render (request, 'BlogApp/enterCategory.html', context)
 
+#show categories
+@allowed_users(allowed_roles=['admin'])
+def fwords(request):
+    all_fwords = Fwords.objects.all()
+    context = {'all_fwords':all_fwords}
+    return render (request,'BlogApp/Fwords.html', context)
+
+
+#add Forbbiden Wordss
+@allowed_users(allowed_roles=['admin'])
+def addFword(request):
+    if request.method == 'POST': #if submited, check the inputs, validate form, then save
+        input = request.POST.get("fword") #getting the category the customer trying to add
+        try:    
+            x = Fwords.objects.get(fword=input) #if category already exists
+            messages.info(request, 'it is already exists')
+            return redirect('addfword')
+        except:
+            form = FwordsForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('Fwords')
+                
+    else:
+        form = FwordsForm()
+        context = {'form': form}
+        return render (request, 'BlogApp/add-fword.html', context)
+
+
+#delete category
+def delFword(request, fword_id):
+    fword = Fwords.objects.get(id=fword_id)
+    fword.delete()
+    return redirect('Fwords')
     
