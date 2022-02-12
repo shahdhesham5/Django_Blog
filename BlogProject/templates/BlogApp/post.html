@@ -54,6 +54,7 @@
      
     <!-- Comments of this Post-->
     
+    
     {% if comments %}
     <h6>Comments {{comments.count }}</h6>
     {% for comment in comments %}
@@ -62,7 +63,9 @@
             <div class="card-body">
                 <h5 class="card-title">{{comment.user}}</h5>
                 <small class="card-title">{{comment.created_on}}<small>
+                     {% for j in comment.comment_info %}
                         <p class="card-text">{{comment.comment_info}}</p>
+
                         <!-- if the comment is written by user or the user is admin -->
                         <!-- he/she can delete this comment-->
                         {% if comment.user == request.user or user.is_superuser %}

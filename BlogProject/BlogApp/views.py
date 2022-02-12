@@ -137,9 +137,9 @@ def post(request,post_id):
     post = Post.objects.get(id = post_id)
     #geting total likes
     totallikes = post.total_likes()
-
     # if adding comment
     if request.method == "POST":
+        
         form = CommentForm(request.POST , request.FILES)
         if form.is_valid():
             comment = form.save(commit=False) # to insert the ForeignKey of post and user before saving comment
@@ -148,9 +148,24 @@ def post(request,post_id):
             comment.save()
     # show comments again after adding comment
     comments = Comment.objects.filter(post = post_id)
+    fword= Fwords.objects.all()
+    # print(fword)
+    forbidden_words=[]
+    for i in fword:
+        forbidden_words.append(i)
+        print(forbidden_words)
+        for j in forbidden_words:
+            print(j)
+    for x in comments:
+        print (x)
+    if x == j :
+        x.replace('****')
+    else:
+        pass
+
     form = CommentForm()
     tags = Tag.objects.filter(tags__id=post_id )
-    context = {'post': post, 'comments': comments, 'form': form, 'totallikes':totallikes , 'tags':tags, 'form': form} 
+    context = {'post': post, 'comments': comments, 'f_words':forbidden_words,'form': form, 'totallikes':totallikes , 'tags':tags, 'form': form} 
     return render(request, 'BlogApp/post.html', context)
 
 #Post likes
