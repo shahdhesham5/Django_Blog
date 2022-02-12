@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render,redirect,get_object_or_404
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
-from BlogApp.models import Category, Post , Comment
+from BlogApp.models import Category, Post , Comment, Subscribers
 from .forms import CommentForm, CreateUserForm,CategoryForm,PostForm #the modified UserCreationForm
 #authentication
 from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm 
@@ -43,7 +43,7 @@ def loginPage(request):
         if user is not None:
             #check if blocked
             if user.groups.filter(name='blockedusers'):
-                return HttpResponse("blocked")
+                return render(request, 'BlogApp/blockedMessage.html' )
             #if not blocked
             login(request, user)
             return redirect('home')
@@ -101,16 +101,12 @@ def blockUser(request,user_id):
     return redirect ('showusers')
 
 
-    
-
 #unblock user
 def unblockUser(request, user_id):
     user = User.objects.get(id = user_id)
     group = Group.objects.get(name = "blockedusers")
     user.groups.remove(group)
     return redirect ('showusers')
-
-
 
 
 #home
@@ -160,9 +156,27 @@ def deletecomment(request,post_id, comment_id):
 def manageBlog(request):
     return render(request,'BlogApp/manageblog.html')
 
+
+#show categories on sidebar
+def categories(request):
+    all_categories = Category.objects.all()
+    context = {'all_categories':all_categories}
+    return render (request,'BlogApp/categories.html', context)
+
 #subscribe to a category
 def subscribe(request, cat_id):
     category = Category.objects.get(id = cat_id)
+    subscriber = Subscribers.objects.create(category=category,subscriber=request.user)
+    return redirect ('home')
+
+#Unsubscribe to a category
+def unsubscribe(request, cat_id):
+    category = Category.objects.get(id = cat_id)
+    subscriber = Subscribers.objects.get(category=category,subscriber=request.user)
+    subscriber.delete()
+    return redirect ('home')
+
+
 
 
 #enter category
@@ -172,11 +186,8 @@ def enterCat(request, cat_id):
     context ={'category': category, 'category_posts':category_posts}
     return render (request, 'BlogApp/enterCategory.html', context)
 
-#show categories
-def categories(request):
-    all_categories = Category.objects.all()
-    context = {'all_categories':all_categories}
-    return render (request,'BlogApp/categories.html', context)
+
+
 
 
 #add category

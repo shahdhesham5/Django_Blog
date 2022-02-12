@@ -11,13 +11,21 @@
 
 {% block main %}
     <h2><b>Home</b> </h2>
-    <div class=" col-2">
+    <div class=" col-1">
         <h3>Categories</h3>
             <table class="table" style="font-size: larger;"> 
             {% for category in all_categories %}
             <tr>
                 <td><a href="{% url 'enter-category' category.id %}" style="text-decoration: none;"><b>{{category.category}}</b> </a> </td>
-                <td><a href="#" style="text-decoration: none;">Subscribe</a></td>
+                {% if not request.user.is_anonymous %}
+
+                        <td><a href="{% url 'unsubscribe' category.id %}" style="text-decoration: none;">UnSubscribe</a></td>
+
+                        <td><a href="{% url 'subscribe' category.id %}" style="text-decoration: none;">Subscribe</a></td>
+
+                {% endif %}
+                
+                
             </tr>
             
             {% endfor %}
