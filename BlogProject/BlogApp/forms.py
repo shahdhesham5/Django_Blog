@@ -1,7 +1,8 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-from .models import Category, Comment, Post
+
+from .models import Category, Comment, Post ,Fwords
 #a modified UserCreationForm so we can add a new field(email)
 class CreateUserForm(UserCreationForm):
     class Meta:
@@ -23,3 +24,10 @@ class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = ('category',)
+
+#a form to add a Forbidden Word
+class FwordsForm(forms.ModelForm):
+    class Meta:
+        model = Fwords
+        fields = ('fword',)
+

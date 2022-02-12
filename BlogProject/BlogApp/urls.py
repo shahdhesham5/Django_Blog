@@ -26,6 +26,12 @@ urlpatterns = [
     path('unblockuser/<user_id>', views.unblockUser, name='unblockuser'),
     path('showusers/', views.showUsers, name='showusers'),
     path('makadmin/<user_id>', views.makeadmin, name='makeadmin'),
+    #crud on Forbidden words
+    path('Fwords/', views.fwords, name='Fwords'),
+    path('add-Fwords/', views.addFword, name='add-fword'),
+    path('del-Fword/<fword_id>', views.delFword, name='del-Fword'),
+
+
     
     
 ]

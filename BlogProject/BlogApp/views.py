@@ -1,8 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
-from BlogApp.models import Category, Post , Comment
-from .forms import CommentForm, CreateUserForm,CategoryForm,PostForm #the modified UserCreationForm
+from BlogApp.models import Category, Post , Comment, Fwords
+from .forms import CommentForm, CreateUserForm,CategoryForm, FwordsForm,PostForm #the modified UserCreationForm
 #authentication
 from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm 
 from django.contrib import messages
@@ -253,3 +253,38 @@ def enterCat(request, cat_id):
     category_posts = Post.objects.filter(category_id=cat_id)
     context ={'category': category, 'category_posts':category_posts}
     return render (request, 'BlogApp/enterCategory.html', context)
+
+#show categories
+@allowed_users(allowed_roles=['admin'])
+def fwords(request):
+    all_fwords = Fwords.objects.all()
+    context = {'all_fwords':all_fwords}
+    return render (request,'BlogApp/Fwords.html', context)
+
+
+#add Forbbiden Wordss
+@allowed_users(allowed_roles=['admin'])
+def addFword(request):
+    if request.method == 'POST': #if submited, check the inputs, validate form, then save
+        input = request.POST.get("fword") #getting the category the customer trying to add
+        try:    
+            x = Fwords.objects.get(fword=input) #if category already exists
+            messages.info(request, 'it is already exists')
+            return redirect('addfword')
+        except:
+            form = FwordsForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('Fwords')
+                
+    else:
+        form = FwordsForm()
+        context = {'form': form}
+        return render (request, 'BlogApp/add-fword.html', context)
+
+
+#delete category
+def delFword(request, fword_id):
+    fword = Fwords.objects.get(id=fword_id)
+    fword.delete()
+    return redirect('Fwords')

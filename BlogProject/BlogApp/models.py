@@ -7,7 +7,10 @@ class Category(models.Model):
     def __str__(self):
         return self.category
 
-
+class Fwords(models.Model):
+    fword = models.CharField(max_length=20)
+    def __str__(self):
+        return self.fword
 
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
