@@ -11,6 +11,10 @@ class Tag(models.Model):
     tag_item = models.CharField(max_length=20, default=None)
     def __str__(self):
         return self.tag_item   
+class Fwords(models.Model):
+    fword = models.CharField(max_length=20)
+    def __str__(self):
+        return self.fword
 
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -20,6 +24,11 @@ class Post(models.Model):
     post_img= models.ImageField(upload_to='images/')
     category = models.ForeignKey(Category,on_delete=models.CASCADE)
     tag = models.ManyToManyField(Tag ,related_name='tags', default=None)
+    likes = models.ManyToManyField(User , related_name='blog_like')
+
+    def total_likes(self):
+        return self.likes.count()
+        
     def __str__(self):
         return self.title      
 
@@ -34,8 +43,4 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.comment_info
-
-
-
-
 

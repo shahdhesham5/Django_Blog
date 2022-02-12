@@ -10,22 +10,30 @@ urlpatterns = [
     path('addpost/', views.addpost, name='addpost'),
     path('deletepost/<post_id>', views.deletepost, name='deletepost'),
     path('updatepost/<post_id>', views.updatepost, name='updatepost'),
+    path('likepost/<post_id>', views.likepost, name='likepost'),
     #show category posts
     path('enter-category/<cat_id>', views.enterCat, name='enter-category'),
     #crud on categories
     path('categories/', views.categories, name='categories'),
     path('add-cat/', views.addCat, name='add-cat'),
     path('delete-cat/<cat_id>', views.delectCat, name='delete-cat'),
+    path('subscribe/<cat_id>', views.subscribe, name='subscribe'),
     #authentication
     path('register/', views.register, name='register'),
     path('login/', views.loginPage, name='login'),
     path('logout/', views.logoutuser, name='logout'),
     path('manageblog/', views.manageBlog, name='manageblog'),
     #crud on users
+    path('deleteuser/<user_id>', views.deleteUser, name='deleteuser'),
     path('blockuser/<user_id>', views.blockUser, name='blockuser'),
     path('unblockuser/<user_id>', views.unblockUser, name='unblockuser'),
     path('showusers/', views.showUsers, name='showusers'),
     path('makadmin/<user_id>', views.makeadmin, name='makeadmin'),
-    
+    #crud on Forbidden words
+    path('Fwords/', views.fwords, name='Fwords'),
+    path('add-Fwords/', views.addFword, name='add-fword'),
+    path('del-Fword/<fword_id>', views.delFword, name='del-Fword'),
+
+
     
 ]

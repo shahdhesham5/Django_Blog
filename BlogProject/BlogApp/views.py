@@ -1,8 +1,8 @@
 from django.http import HttpResponse
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
-from BlogApp.models import Category, Post , Comment, Tag
-from .forms import CommentForm, CreateUserForm,CategoryForm,PostForm, TagForm #the modified UserCreationForm
+from BlogApp.models import Category, Post , Comment, Fwords, Tag
+from .forms import CommentForm, CreateUserForm,CategoryForm, FwordsForm,PostForm ,  TagForm#the modified UserCreationForm
 #authentication
 from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm
 from django.contrib import messages
@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group, User #User model to access users and admins
 
+ 
 #authentications
 #registration
 @unauthenticated_user
@@ -21,8 +22,8 @@ def register(request):
             user = form.save()
             username = form.cleaned_data.get('username')
             #assign the user to a group on creation
-            group = Group.objects.get(name='normaluser')
-            user.groups.add(group)
+            # group = Group.objects.get(name='normaluser')
+            # user.groups.add(group)
             messages.success(request, "Account created successfully for "+username)
             return redirect ('login')
     context = {'form':form}
@@ -70,9 +71,12 @@ def showUsers(request):
     context ={'users' : users, 'blocked_users':blocked_users}
     return render(request,'BlogApp/showusers.html', context)
 
-
-
-#makeadmin
+#delete user
+def deleteUser(request, user_id):
+    user = User.objects.get(id = user_id)
+    user.delete()
+    return redirect('showusers')
+#makeadmin 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def makeadmin(request, user_id):
@@ -118,6 +122,8 @@ def home(request):
 #Post details
 def post(request,post_id):
     post = Post.objects.get(id = post_id)
+    #geting total likes
+    totallikes = post.total_likes()
     # if adding comment
     if request.method == "POST":
         form = CommentForm(request.POST , request.FILES)
@@ -130,8 +136,16 @@ def post(request,post_id):
     comments = Comment.objects.filter(post = post_id)
     form = CommentForm()
     tags = Tag.objects.filter(tags__id=post_id )
-    context = {'post': post, 'comments': comments, 'tags':tags, 'form': form}
+    context = {'post': post, 'comments': comments, 'form': form, 'totallikes':totallikes , 'tags':tags, 'form': form} 
     return render(request, 'BlogApp/post.html', context)
+
+#Post likes
+@login_required(login_url='login')
+def likepost(request, post_id):
+    post = get_object_or_404(Post, id=request.POST.get('post_id'))
+    post.likes.add(request.user)
+    return redirect('post',post_id=post_id)
+
 
 # delet comment from spcefic post
 def deletecomment(request,post_id, comment_id):
@@ -152,8 +166,17 @@ def deletecomment(request,post_id, comment_id):
 def manageBlog(request):
     return render(request,'BlogApp/manageblog.html')
 
+#subscribe to a category
+def subscribe(request, cat_id):
+    category = Category.objects.get(id = cat_id)
 
 
+#enter category
+def enterCat(request, cat_id):
+    category = Category.objects.get(id = cat_id)
+    category_posts = Post.objects.filter(category_id=cat_id)
+    context ={'category': category, 'category_posts':category_posts}
+    return render (request, 'BlogApp/enterCategory.html', context)
 
 #show categories
 def categories(request):
@@ -188,6 +211,10 @@ def delectCat(request, cat_id):
     category = Category.objects.get(id=cat_id)
     category.delete()
     return redirect('categories')
+
+
+
+
 
 #show posts
 def posts(request):
@@ -288,3 +315,39 @@ def enterCat(request, cat_id):
     category_posts = Post.objects.filter(category_id=cat_id)
     context ={'category': category, 'category_posts':category_posts}
     return render (request, 'BlogApp/enterCategory.html', context)
+
+#show categories
+@allowed_users(allowed_roles=['admin'])
+def fwords(request):
+    all_fwords = Fwords.objects.all()
+    context = {'all_fwords':all_fwords}
+    return render (request,'BlogApp/Fwords.html', context)
+
+
+#add Forbbiden Wordss
+@allowed_users(allowed_roles=['admin'])
+def addFword(request):
+    if request.method == 'POST': #if submited, check the inputs, validate form, then save
+        input = request.POST.get("fword") #getting the category the customer trying to add
+        try:    
+            x = Fwords.objects.get(fword=input) #if category already exists
+            messages.info(request, 'it is already exists')
+            return redirect('addfword')
+        except:
+            form = FwordsForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('Fwords')
+                
+    else:
+        form = FwordsForm()
+        context = {'form': form}
+        return render (request, 'BlogApp/add-fword.html', context)
+
+
+#delete category
+def delFword(request, fword_id):
+    fword = Fwords.objects.get(id=fword_id)
+    fword.delete()
+    return redirect('Fwords')
+    

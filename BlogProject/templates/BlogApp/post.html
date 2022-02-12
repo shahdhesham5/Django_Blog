@@ -51,8 +51,11 @@
 
         </div>
     </div>
+     
     <!-- Comments of this Post-->
-    <h6>Comments {% if comments %}{{comments.count }} {% endif %}</h6>
+    
+    {% if comments %}
+    <h6>Comments {{comments.count }}</h6>
     {% for comment in comments %}
     <div class="col-12 ">
         <div class="card">
@@ -69,19 +72,31 @@
                         {% endif %}
             </div>
         </div>
-    </div>
-    {% endfor %}
+        {% endfor %}
+    {% else %}
+        <div class ="alert alert-danger">
+        There are no comments for this post, be the first to comment!
+        </div>
+    {% endif %}
     <!-- Comment Form if the user need to add a comment-->
     <form method="POST" enctype="multipart/form-data" style="display: none;" id="form"> {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="btn btn-primary">submit</button>
         <button type="reset" class="btn btn-danger">cancel</button>
     </form>
+  
     <!-- Add Comment button -->
     {% if not request.user.is_anonymous %}
     <button class="btn btn-primary col-2 " id="button" onclick="addComment()">Add Comment</button>
+     <!-- like Form if the user need to add a like-->
+    <form method="POST" action="{% url 'likepost' post.id %}">
+        {% csrf_token %}
+        <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-primary">Like</button>
+        {{ totallikes }}
+    </form>
     {% endif %}
-    <!-- Script file for showing and hiding CommentForm-->
+    
+    <!-- Script file for showing and hiding CommentForm -->
     <script>
         function addComment() {
             console.log("sss")
@@ -94,6 +109,7 @@
                 form.style.display = "none"
                 button.style.display = "block"
             }
+      
         }
 
         var img = document.getElementById("img")
@@ -109,4 +125,4 @@
         }
     </script>
     <!-- end Script-->
-    {% endblock %}
+{% endblock %}
