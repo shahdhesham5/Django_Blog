@@ -25,8 +25,13 @@ class Post(models.Model):
     category = models.ForeignKey(Category,on_delete=models.CASCADE)
     tag = models.ManyToManyField(Tag ,related_name='tags', blank=True)
     likes = models.ManyToManyField(User , related_name='blog_like')
+    dislikes = models.ManyToManyField(User , related_name='blog_dislike')
+
     def total_likes(self):
         return self.likes.count()
+        
+    def total_dislikes(self):
+        return self.dislikes.count()
         
     def __str__(self):
         return self.title      

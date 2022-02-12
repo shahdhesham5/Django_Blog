@@ -11,6 +11,7 @@ urlpatterns = [
     path('deletepost/<post_id>', views.deletepost, name='deletepost'),
     path('updatepost/<post_id>', views.updatepost, name='updatepost'),
     path('likepost/<post_id>', views.likepost, name='likepost'),
+    path('dislikepost/<post_id>', views.dislikepost, name='dislikepost'),
     #show category posts
     path('enter-category/<cat_id>', views.enterCat, name='enter-category'),
     path('subscribe/<cat_id>/', views.subscribe, name='subscribe'),
@@ -35,6 +36,8 @@ urlpatterns = [
     path('Fwords/', views.fwords, name='Fwords'),
     path('add-Fwords/', views.addFword, name='add-fword'),
     path('del-Fword/<fword_id>', views.delFword, name='del-Fword'),
+    #search for tags and post titles 
+    path('search/', views.search, name='search'),
 
 
     

@@ -1,5 +1,6 @@
+from this import s
 from django.http import HttpResponse
-from django.shortcuts import render,redirect,get_object_or_404
+from django.shortcuts import render,redirect
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
 from BlogApp.models import Category, Post , Comment, Fwords, Tag, Subscribers
 from .forms import CommentForm, CreateUserForm,CategoryForm, FwordsForm,PostForm ,  TagForm#the modified UserCreationForm
@@ -108,7 +109,6 @@ def blockUser(request,user_id):
     my_group.user_set.add(user)
     return redirect ('showusers')
 
-
 #unblock user
 @login_required(login_url='login')
 @admin_only
@@ -117,7 +117,6 @@ def unblockUser(request, user_id):
     group = Group.objects.get(name = "blockedusers")
     user.groups.remove(group)
     return redirect ('showusers')
-
 
 #home
 def home(request):
@@ -137,6 +136,18 @@ def post(request,post_id):
     post = Post.objects.get(id = post_id)
     #geting total likes
     totallikes = post.total_likes()
+    totaldislikes = post.total_dislikes()
+    is_like = False
+    for like in post.likes.all():
+        if like == request.user:  #if user has already likes this post
+            is_like = True
+            break
+    
+    is_dislike = False   #checks whether user disliked this post or not
+    for dislike in post.dislikes.all():
+        if dislike == request.user:  #if user is already disliked this post
+            is_dislike = True
+            break
     # if adding comment
     if request.method == "POST":
         
@@ -165,16 +176,63 @@ def post(request,post_id):
 
     form = CommentForm()
     tags = Tag.objects.filter(tags__id=post_id )
-    context = {'post': post, 'comments': comments, 'f_words':forbidden_words,'form': form, 'totallikes':totallikes , 'tags':tags, 'form': form} 
+    context = {'post': post, 'comments': comments, 'form': form ,'totallikes':totallikes,'totaldislikes':totaldislikes,'is_like':is_like,'is_dislike':is_dislike, 'tags':tags, 'form': form} 
     return render(request, 'BlogApp/post.html', context)
 
-#Post likes
+# Post likes
 @login_required(login_url='login')
 def likepost(request, post_id):
-    post = get_object_or_404(Post, id=request.POST.get('post_id'))
-    post.likes.add(request.user)
+    post = Post.objects.get(id=post_id)
+
+    is_dislike = False   #checks whether user disliked this post or not
+    for dislike in post.dislikes.all():
+        if dislike == request.user:  #if user is already disliked this post
+            is_dislike = True
+            break
+    if is_dislike:   #if user is already disliked this post, will undo it 
+            post.dislikes.remove(request.user)
+         
+    is_like = False
+    for like in post.likes.all():
+        if like == request.user:  #if user has already likes this post
+            is_like = True
+            break
+    if not is_like:
+        post.likes.add(request.user) #if user didn't like post yet, will add like
+    
+    if is_like:
+        post.likes.remove(request.user) #if user has already likes this post, will undo it
     return redirect('post',post_id=post_id)
 
+# Post dislikes
+@login_required(login_url='login')
+def dislikepost(request, post_id):
+    post = Post.objects.get(id=post_id)
+    
+    is_like = False
+    for like in post.likes.all():
+        if like == request.user:
+            is_like = True
+            break
+    if is_like:
+            post.likes.remove(request.user)
+            
+    is_dislike = False
+    for dislike in post.dislikes.all():
+        if dislike == request.user:
+            is_dislike = True
+            break
+    if not is_dislike:
+        post.dislikes.add(request.user)
+    
+    if is_dislike:
+        post.dislikes.remove(request.user)
+
+    dislikesnum = post.total_dislikes()
+    if dislikesnum >= 10:
+        post.delete()
+
+    return redirect('post',post_id=post_id)
 
 # delet comment from spcefic post
 @login_required(login_url='login')
@@ -182,13 +240,6 @@ def deletecomment(request,post_id, comment_id):
     comment = Comment.objects.get(id = comment_id)
     comment.delete()
     return redirect('post',post_id=post_id) # redirct to post view with this parameter
-
-
-
-#posts
-# @login_required(login_url='login')
-# def posts(request):
-#     return render(request, 'BlogApp/posts.html')
 
 #manageblog
 @login_required(login_url='login')
@@ -408,3 +459,26 @@ def delFword(request, fword_id):
 
 
     
+def search(request):
+    searchResults = Post.objects.none()
+    if request.method == "POST":
+        selected = request.POST.get("selected")
+        posts = Post.objects.all()
+        tags = Tag.objects.all()
+        
+        for tag in tags:
+            if selected in tag.tag_item:
+                sel = Post.objects.filter(tag=tag)
+                searchResults = searchResults | sel
+        for post in posts:
+            if selected in post.title:
+                sel = Post.objects.filter(title=post.title)
+                searchResults = searchResults | sel
+        if not searchResults:
+            context = {'noResult': True, 'searchValue': selected}
+        else:
+            context = {'posts': searchResults, 'searchValue': selected}
+        return render(request,  'BlogApp/search.html', context)
+    else:
+        context = {'noResult': True}
+        return render(request,  'BlogApp/search.html', context)
