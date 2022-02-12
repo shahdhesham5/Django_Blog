@@ -72,6 +72,8 @@ def showUsers(request):
     return render(request,'BlogApp/showusers.html', context)
 
 #delete user
+@login_required(login_url='login')
+@admin_only
 def deleteUser(request, user_id):
     user = User.objects.get(id = user_id)
     user.delete()
@@ -94,6 +96,8 @@ def makeadmin(request, user_id):
 
 
 #block user
+@login_required(login_url='login')
+@admin_only
 def blockUser(request,user_id):
     user = User.objects.get(id = user_id)
     my_group = Group.objects.get(name = "blockedusers")
@@ -102,6 +106,8 @@ def blockUser(request,user_id):
 
 
 #unblock user
+@login_required(login_url='login')
+@admin_only
 def unblockUser(request, user_id):
     user = User.objects.get(id = user_id)
     group = Group.objects.get(name = "blockedusers")
@@ -116,6 +122,7 @@ def home(request):
     return render(request, 'BlogApp/home.html',context)
 
 #Post details
+@login_required(login_url='login')
 def post(request,post_id):
     post = Post.objects.get(id = post_id)
     #geting total likes
@@ -144,6 +151,7 @@ def likepost(request, post_id):
 
 
 # delet comment from spcefic post
+@login_required(login_url='login')
 def deletecomment(request,post_id, comment_id):
     comment = Comment.objects.get(id = comment_id)
     comment.delete()
@@ -170,19 +178,19 @@ def categories(request):
     return render (request,'BlogApp/categories.html', context)
 
 #subscribe to a category
+@login_required(login_url='login')
 def subscribe(request, cat_id):
     category = Category.objects.get(id = cat_id)
     subscriber = Subscribers.objects.create(category=category,subscriber=request.user)
     return redirect ('home')
 
 #Unsubscribe to a category
+@login_required(login_url='login')
 def unsubscribe(request, cat_id):
     category = Category.objects.get(id = cat_id)
     subscriber = Subscribers.objects.get(category=category,subscriber=request.user)
     subscriber.delete()
     return redirect ('home')
-
-
 
 
 #enter category
@@ -191,9 +199,6 @@ def enterCat(request, cat_id):
     category_posts = Post.objects.filter(category_id=cat_id)
     context ={'category': category, 'category_posts':category_posts}
     return render (request, 'BlogApp/enterCategory.html', context)
-
-
-
 
 
 #add category
@@ -210,7 +215,6 @@ def addCat(request):
             if form.is_valid():
                 form.save()
                 return redirect('categories')
-
     else:
         form = CategoryForm()
         context = {'form': form}
@@ -218,13 +222,11 @@ def addCat(request):
 
 
 #delete category
+@allowed_users(allowed_roles=['admin'])
 def delectCat(request, cat_id):
     category = Category.objects.get(id=cat_id)
     category.delete()
     return redirect('categories')
-
-
-
 
 
 #show posts
@@ -235,6 +237,7 @@ def posts(request):
 
 
 #addpost
+@login_required(login_url='login')
 def addpost(request):
     if request.method == 'POST': #if submited, check the inputs, validate form, then save
         form = PostForm(request.POST , request.FILES)
@@ -264,10 +267,12 @@ def addpost(request):
 
 
 #delete post
+@login_required(login_url='login')
 def deletepost(request, post_id):
     post = Post.objects.get(id=post_id)
     post.delete()
     return redirect('posts')
+
 
 #update post
 @login_required(login_url='login')
@@ -315,17 +320,9 @@ def updatepost(request,post_id):
 #     if keyword:
 #         Posts = Posts.objects.filter(title__contains = keyword)
 #         return render(request,"posts.html",{"Posts":Posts})
-
 #     Posts = Posts.objects.all()
 #     return render(request, 'BlogApp/posts.html',{"Posts":Posts})
 
-
-#enter category
-def enterCat(request, cat_id):
-    category = Category.objects.get(id = cat_id)
-    category_posts = Post.objects.filter(category_id=cat_id)
-    context ={'category': category, 'category_posts':category_posts}
-    return render (request, 'BlogApp/enterCategory.html', context)
 
 #show categories
 @allowed_users(allowed_roles=['admin'])
@@ -356,7 +353,7 @@ def addFword(request):
         return render (request, 'BlogApp/add-fword.html', context)
 
 
-#delete category
+#forbidden words
 def delFword(request, fword_id):
     fword = Fwords.objects.get(id=fword_id)
     fword.delete()
