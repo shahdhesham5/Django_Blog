@@ -13,6 +13,8 @@ urlpatterns = [
     path('likepost/<post_id>', views.likepost, name='likepost'),
     #show category posts
     path('enter-category/<cat_id>', views.enterCat, name='enter-category'),
+    path('subscribe/<cat_id>/', views.subscribe, name='subscribe'),
+    path('unsubscribe/<cat_id>/', views.unsubscribe, name='unsubscribe'),
     #crud on categories
     path('categories/', views.categories, name='categories'),
     path('add-cat/', views.addCat, name='add-cat'),

@@ -1,0 +1,17 @@
+{% extends 'BlogApp/main.html' %}
+{% load static %}
+
+{% block head %}
+    <title>Blocked</title>
+{% endblock %}
+
+
+
+
+{% block main %}
+    <div class="alert alert-danger" role="alert">
+        your account has been disabled, please contact your admin
+        <a href="{% url 'login' %}"> login</a>
+    </div>
+{% endblock %}
+

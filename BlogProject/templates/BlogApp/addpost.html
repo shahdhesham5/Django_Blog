@@ -47,6 +47,7 @@
     input.required = false;
     hashtagArray = []
     input.addEventListener('keypress', () => {
+        input = document.getElementById('id_tag_item')
         if (event.key === "Enter" && input.value.length > 0) {
             ok = true
             msg.style.display="none"
