@@ -23,7 +23,7 @@ class Post(models.Model):
     created_on = models.DateTimeField(default=timezone.now)
     post_img= models.ImageField(upload_to='images/')
     category = models.ForeignKey(Category,on_delete=models.CASCADE)
-    tag = models.ManyToManyField(Tag ,related_name='tags', default=None)
+    tag = models.ManyToManyField(Tag ,related_name='tags', blank=True)
     likes = models.ManyToManyField(User , related_name='blog_like')
 
     def total_likes(self):

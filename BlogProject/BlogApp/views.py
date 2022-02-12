@@ -290,7 +290,6 @@ def updatepost(request,post_id):
                     post.save()
                     post.tag.add(tag_item)
             post.save()
-            messages.success(request,"The post has been successfully updated")
             return redirect('post', post_id=post_id)
     else:
         form = PostForm(instance = postSelected)
