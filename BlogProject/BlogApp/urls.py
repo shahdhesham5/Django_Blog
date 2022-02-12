@@ -11,6 +11,7 @@ urlpatterns = [
     path('deletepost/<post_id>', views.deletepost, name='deletepost'),
     path('updatepost/<post_id>', views.updatepost, name='updatepost'),
     path('likepost/<post_id>', views.likepost, name='likepost'),
+    path('dislikepost/<post_id>', views.dislikepost, name='dislikepost'),
     #show category posts
     path('enter-category/<cat_id>', views.enterCat, name='enter-category'),
     #crud on categories
