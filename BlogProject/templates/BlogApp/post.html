@@ -9,7 +9,20 @@
 {% endblock %}
 
 {% block main %}
+<style>
+    .tag-container {
+        display: flex;
+        flex-flow: row wrap;
+    }
 
+    .tag {
+        pointer-events: none;
+        background-color: #242424;
+        color: white;
+        padding: 6px;
+        margin: 5px;
+    }
+</style>
 <div class="row postDiv">
     <!-- ShowPost detials -->
     <div class="col-12 ">
@@ -22,7 +35,8 @@
                 {% endif %}
             </div>
             <hr>
-            <div class="Post" id="Post" style="display: flex; justify-content: space-between; width: 100%; padding: 0 2% ;">
+            <div class="Post" id="Post"
+                style="display: flex; justify-content: space-between; width: 100%; padding: 0 2% ;">
                 <div style="width:55%; text-align: justify;" id="content">
                     <p class="card-text">{{post.content}}</p>
                     <small class="card-text" style="float: right; clear: right;">{{post.created_on}}</small>
@@ -31,7 +45,7 @@
                 <div style="width: 40%; display: flex; justify-content: center;
                 flex-direction: column;" id="imgDiv">
                     <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
-                        <img src="{{ MEDIA_URL }}/{{post.post_img}}"id="img" class="img-fluid" style="width: 100%;" />
+                        <img src="{{ MEDIA_URL }}/{{post.post_img}}" id="img" class="img-fluid" style="width: 100%;" />
                         <a href="#!">
                             <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
                         </a>
@@ -43,17 +57,20 @@
 
 
             <div class="card-body">
-                <p class="card-text">{{post.caregory}}</p>
-                {% for tag in tags %}
-                <p class="card-text">{{tag}}</p>
-                {% endfor %}
+                <h4 class="card-text">{{post.caregory}}</h4>
+                <dv class="tag-container">
+                    {% for tag in tags %}
+                    <p class="card-text tag">{{tag}}</p>
+                    {% endfor %}
+                </dv>
+                
             </div>
 
         </div>
     </div>
-     
+
     <!-- Comments of this Post-->
-    
+
     {% if comments %}
     <h6>Comments {{comments.count }}</h6>
     {% for comment in comments %}
@@ -73,9 +90,9 @@
             </div>
         </div>
         {% endfor %}
-    {% else %}
-        <div class ="alert alert-danger">
-        There are no comments for this post, be the first to comment!
+        {% else %}
+        <div class="alert alert-danger">
+            There are no comments for this post, be the first to comment!
         </div>
     {% endif %}
     <!-- Comment Form if the user need to add a comment-->
@@ -85,49 +102,73 @@
         <button type="reset" class="btn btn-danger">cancel</button>
     </form>
   
-    <!-- Add Comment button -->
+    
     {% if not request.user.is_anonymous %}
+    <!-- Add Comment button -->
     <button class="btn btn-primary col-2 " id="button" onclick="addComment()">Add Comment</button>
-    <form method="POST" action="{% url 'likepost' post.id %}">
-        {% csrf_token %}
-        <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-primary">Like</button>
-        {{ totallikes }}
-    </form>
+    <div class="d-flex flex-row">
+        <!-- like Form if the user need to add a like-->
+        <form method="POST" action="{% url 'likepost' post.id %}">
+            {% csrf_token %}
+            {% if is_like %}
+            <button type="submit" name="post_id" value="{{ post.id }}"  style="background-color: transparent; border: none; box-shadow: none;">
+                <i class="far fa-thumbs-up" style="color: blue; font-size:x-large;"></i> <span>{{ totallikes }}</span>
+            </button>
+            {% else %}
+            <button type="submit" name="post_id" value="{{ post.id }}"  style="background-color: transparent; border: none; box-shadow: none;">
+                <i class="far fa-thumbs-up"></i> <span>{{ totallikes }}</span>
+            </button>
+            {% endif %}
+        </form>
+         <!-- dislike Form if the user need to add a dislike-->
+         <form method="POST" action="{% url 'dislikepost' post.id %}">
+            {% csrf_token %}
+            {% if is_dislike %}
+            <button type="submit" name="post_id" value="{{ post.id }}"  style="background-color: transparent; border: none; box-shadow: none;">
+                <i class="far fa-thumbs-down" style="color:brown; font-size:x-large;" ></i> <span>{{ totaldislikes }}</span>
+            </button>
+            {% else %}
+            <button type="submit" name="post_id" value="{{ post.id }}"  style="background-color: transparent; border: none; box-shadow: none;">
+                <i class="far fa-thumbs-down"></i> <span>{{ totaldislikes }}</span>
+            </button>
+            {% endif %}
+        </form>
+    </div>
     {% else %}
     <p style="color: red;">Please sign in to like and comment on posts!</p>
     {% endif %}
-    
-     <!-- like Form if the user need to add a like-->
+   
      
-     
+
     
-    <!-- Script file for showing and hiding CommentForm -->
-    <script>
-        function addComment() {
-            console.log("sss")
-            var form = document.getElementById("form")
-            var button = document.getElementById("button")
-            if (form.style.display === "none") {
-                form.style.display = "block"
-                button.style.display = "none"
-            } else {
-                form.style.display = "none"
-                button.style.display = "block"
-            }
-      
+        
+<!-- Script file for showing and hiding CommentForm -->
+<script>
+    function addComment() {
+        console.log("sss")
+        var form = document.getElementById("form")
+        var button = document.getElementById("button")
+        if (form.style.display === "none") {
+            form.style.display = "block"
+            button.style.display = "none"
+        } else {
+            form.style.display = "none"
+            button.style.display = "block"
         }
 
-        var img = document.getElementById("img")
-        var post = document.getElementById("Post")
-        var content = document.getElementById("content")
-        var imgDiv = document.getElementById("imgDiv")
-        console.log(img.scrollHeight)
-        console.log(img.scrollWidth)
-        if (img.scrollHeight < img.scrollWidth){
-            post.style.flexDirection ="column"
-            content.style.width="100%"
-            imgDiv.style.width="100%"
-        }
-    </script>
-    <!-- end Script-->
+    }
+
+    var img = document.getElementById("img")
+    var post = document.getElementById("Post")
+    var content = document.getElementById("content")
+    var imgDiv = document.getElementById("imgDiv")
+    console.log(img.scrollHeight)
+    console.log(img.scrollWidth)
+    if (img.scrollHeight < img.scrollWidth) {
+        post.style.flexDirection = "column"
+        content.style.width = "100%"
+        imgDiv.style.width = "100%"
+    }
+</script>
+<!-- end Script-->
 {% endblock %}
