@@ -20,9 +20,9 @@
                     <td><a href="{% url 'enter-category' category.id %}" style="text-decoration: none;"><b>{{category.category}}</b> </a> </td>
                     {% if not request.user.is_anonymous %}
                             {% if category.id in all_subscribers %}
-                            <td><a href="{% url 'unsubscribe' category.id %}" style="text-decoration: none;">UnSubscribe</a></td>
+                            <td><button type="button" class="btn btn-danger col-8" style="font-size: medium;"><a href="{% url 'unsubscribe' category.id %}" style="text-decoration: none; color:white;">Unsubscribe</a></button></td>
                             {% else %}
-                            <td><a href="{% url 'subscribe' category.id %}" style="text-decoration: none;">Subscribe</a></td>
+                            <td><button type="button" class="btn btn-primary col-8" style="font-size: medium;"><a href="{% url 'subscribe' category.id %}" style="text-decoration: none; color:white;">Subscribe</a></button></td>
                             {% endif %}
                     {% else %}
                          <td><a href="{% url 'login' %}" style="text-decoration: none; font-size: smaller;">login to subscribe</a></td>
