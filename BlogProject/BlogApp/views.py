@@ -310,4 +310,6 @@ def delFword(request, fword_id):
     fword = Fwords.objects.get(id=fword_id)
     fword.delete()
     return redirect('Fwords')
+
+
     

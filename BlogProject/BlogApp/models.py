@@ -20,6 +20,10 @@ class Post(models.Model):
     post_img= models.ImageField(upload_to='images/')
     category = models.ForeignKey(Category,on_delete=models.CASCADE)
     likes = models.ManyToManyField(User , related_name='blog_like')
+    
+
+    
+
 
     def total_likes(self):
         return self.likes.count()
