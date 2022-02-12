@@ -375,19 +375,6 @@ def updatepost(request,post_id):
         context = {'form': form, 'form2': form2}
         return render(request,"BlogApp/updatepost.html",context)
 
-
-
-#searchforPosts
-# @login_required(login_url='login')
-# def searchforposts(request):
-#     keyword = request.GET.get("keyword")
-#     if keyword:
-#         Posts = Posts.objects.filter(title__contains = keyword)
-#         return render(request,"posts.html",{"Posts":Posts})
-#     Posts = Posts.objects.all()
-#     return render(request, 'BlogApp/posts.html',{"Posts":Posts})
-
-
 #show categories
 @allowed_users(allowed_roles=['admin'])
 def fwords(request):
