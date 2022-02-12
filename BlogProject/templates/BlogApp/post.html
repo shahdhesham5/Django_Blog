@@ -117,7 +117,18 @@
             {% endif %}
         </form>
     </div>
+    <form method="POST" action="{% url 'likepost' post.id %}">
+        {% csrf_token %}
+        <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-primary">Like</button>
+        {{ totallikes }}
+    </form>
+    {% else %}
+    <p style="color: red;">Please sign in to like and comment on posts!</p>
     {% endif %}
+    
+     <!-- like Form if the user need to add a like-->
+     
+     
     
     <!-- Script file for showing and hiding CommentForm -->
 

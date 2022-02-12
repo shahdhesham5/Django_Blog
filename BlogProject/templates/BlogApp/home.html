@@ -11,18 +11,65 @@
 
 {% block main %}
     <h2><b>Home</b> </h2>
-    <div class=" col-2">
-        <h3>Categories</h3>
-            <table class="table" style="font-size: larger;"> 
-            {% for category in all_categories %}
-            <tr>
-                <td><a href="{% url 'enter-category' category.id %}" style="text-decoration: none;"><b>{{category.category}}</b> </a> </td>
-                <td><a href="#" style="text-decoration: none;">Subscribe</a></td>
-            </tr>
-            
+    <div class="row">
+        <div class="col-md-3 col-sm-12 mr-2">
+            <h3>Categories</h3>
+                <table class="table" style="font-size: larger;"> 
+                {% for category in all_categories %}
+                <tr>
+                    <td><a href="{% url 'enter-category' category.id %}" style="text-decoration: none;"><b>{{category.category}}</b> </a> </td>
+                    {% if not request.user.is_anonymous %}
+                            {% if category.id in all_subscribers %}
+                            <td><a href="{% url 'unsubscribe' category.id %}" style="text-decoration: none;">UnSubscribe</a></td>
+                            {% else %}
+                            <td><a href="{% url 'subscribe' category.id %}" style="text-decoration: none;">Subscribe</a></td>
+                            {% endif %}
+                    {% else %}
+                         <td><a href="{% url 'login' %}" style="text-decoration: none; font-size: smaller;">login to subscribe</a></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+                </table>
+        </div>
+        <div class="col-9">
+            <div class="row"> {% for post in all_posts %}
+       
+                <div class="col-md-6 col-lg-4 col-sm-12 ">
+                    <div class="card mb-4" style="background: rgba(233, 233, 233, 0.322); ">
+                      
+                      <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                        <a href="{% url 'post' post.id %}">
+                            <img src=" {{MEDIA_URL}}/{{post.post_img}}" class="img-fluid" style="width:  100%;
+                            height: 200px;
+                            background-size: cover;"/> </a>
+                        <a href="#!">
+                          <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                        </a>
+                      </div>
+                      <h4 class="card-title" >{{post.title}}</h4>
+                      <small class="card-title">{{post.created_on}}</small>
+                        <p class="card-text" style="white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;  ">
+                          {{post.content}}
+                        </p>
+                      
+                      <div class="card-body">
+                        
+                        <div  class="text-center">
+                            {% if post.user == request.user or  user.is_superuser %}
+                            <a class="btn btn-info " href="{% url 'deletepost' post.id %}">Delete</a>
+                            <a class="btn btn-info " href="{% url 'updatepost' post.id %}">Update</a>
+                            {% endif %}
+        
+                        </div>
+                        
+                      </div>
+                    </div>
+                  </div>
             {% endfor %}
-            </table>
-        </ul>
+            </div>
+        </div>
     </div>
 {% endblock %}
 
