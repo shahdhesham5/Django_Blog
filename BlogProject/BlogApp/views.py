@@ -44,9 +44,13 @@ def loginPage(request):
             #check if blocked
             if user.groups.filter(name='blockedusers'):
                 return render(request, 'BlogApp/blockedMessage.html' )
-            #if not blocked
-            login(request, user)
-            return redirect('home')
+            else:
+                if user is not None:
+                    login(request, user)
+                if request.GET.get('next') is not None:
+                    return redirect(request.GET.get('next'))
+                else:
+                    return redirect('home')
         #if not, show this flash message
         else:
             messages.info(request, 'Username or Password is incorrect')
@@ -118,11 +122,17 @@ def unblockUser(request, user_id):
 #home
 def home(request):
     all_categories = Category.objects.all()
-    context = {'all_categories':all_categories}
+    all_posts = Post.objects.all()
+    if not request.user.is_anonymous:
+        all_subscribers = Subscribers.objects.filter(subscriber=request.user).values_list('category_id', flat=True)
+        context = {'all_categories':all_categories, 'all_subscribers':all_subscribers,'all_posts':all_posts}
+    else:
+        context = {'all_categories':all_categories,'all_posts':all_posts}
     return render(request, 'BlogApp/home.html',context)
 
+
+
 #Post details
-@login_required(login_url='login')
 def post(request,post_id):
     post = Post.objects.get(id = post_id)
     #geting total likes
@@ -166,6 +176,7 @@ def deletecomment(request,post_id, comment_id):
 
 #manageblog
 @login_required(login_url='login')
+@admin_only
 # @allowed_users(allowed_roles=['admin'])
 def manageBlog(request):
     return render(request,'BlogApp/manageblog.html')
@@ -338,19 +349,37 @@ def addFword(request):
     if request.method == 'POST': #if submited, check the inputs, validate form, then save
         input = request.POST.get("fword") #getting the category the customer trying to add
         try:    
-            x = Fwords.objects.get(fword=input) #if category already exists
+            x = Fwords.objects.get(fword=input) #if forbidden word already exists
             messages.info(request, 'it is already exists')
-            return redirect('addfword')
+            return redirect('add-fword')
         except:
             form = FwordsForm(request.POST)
             if form.is_valid():
                 form.save()
                 return redirect('Fwords')
-                
     else:
         form = FwordsForm()
         context = {'form': form}
         return render (request, 'BlogApp/add-fword.html', context)
+
+
+@allowed_users(allowed_roles=['admin'])
+def addCat(request):
+    if request.method == 'POST': #if submited, check the inputs, validate form, then save
+        input = request.POST.get("category") #getting the category the customer trying to add
+        try:
+            x = Category.objects.get(category=input) #if category already exists
+            messages.info(request, 'Category already exists')
+            return redirect('add-cat')
+        except:
+            form = CategoryForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('categories')
+    else:
+        form = CategoryForm()
+        context = {'form': form}
+        return render (request, 'BlogApp/addcat.html', context)
 
 
 #forbidden words
