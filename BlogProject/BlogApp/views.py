@@ -228,21 +228,25 @@ def addpost(request):
     if request.method == 'POST': #if submited, check the inputs, validate form, then save
         form = PostForm(request.POST , request.FILES)
         form2 = TagForm(request.POST)
-        if form.is_valid() and form2.is_valid():
+        if form.is_valid():
             post = form.save(commit=False)
             post.user = request.user
+            post.save()
+            post.tag.clear()
+            post.save()
             postTags= form.cleaned_data['tag']
             for tag in postTags:
                 tag_item = Tag.objects.get(tag_item= tag)
                 post.save()
                 post.tag.add(tag)
-            tagsArray = form2.cleaned_data['tag_item']
-            tags = tagsArray.split(",")
-            for tag in tags:
-                tag_item = Tag.objects.create(tag_item= tag)
-                tag_item.save()
-                post.save()
-                post.tag.add(tag_item)
+            if form2.is_valid():
+                tagsArray = form2.cleaned_data['tag_item']
+                tags = tagsArray.split(",")
+                for tag in tags:
+                    tag_item = Tag.objects.create(tag_item= tag)
+                    tag_item.save()
+                    post.save()
+                    post.tag.add(tag_item)
             post.save()
             return redirect('posts')
     else:
@@ -267,7 +271,6 @@ def updatepost(request,post_id):
         form2 = TagForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
-
             post.user = request.user
             post.save()
             post.tag.clear()
