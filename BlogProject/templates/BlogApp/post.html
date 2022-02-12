@@ -105,7 +105,7 @@
     
     {% if not request.user.is_anonymous %}
     <!-- Add Comment button -->
-    <button class="btn btn-primary col-2 " id="button" onclick="addComment()">Add Comment</button>
+    <button class="btn btn-primary col-2 " id="button" onclick="addComment()">Add Comment <i class='fas fa-pen-square'></i></button> 
     <div class="d-flex flex-row">
         <!-- like Form if the user need to add a like-->
         <form method="POST" action="{% url 'likepost' post.id %}">

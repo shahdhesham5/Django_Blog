@@ -11,16 +11,31 @@
 
 {% block main %}
 <h2>Manage blog</h2>
-<ul class="col-4">
-    <div class="list-group">
-        <a href="{% url 'showusers' %}" class="list-group-item list-group-item-action" aria-current="true">
-            users
+
+    <div class="col-7 mt-5 ">
+        <a href="{% url 'showusers' %}" class="list-group-item list-group-item-action" aria-current="true">users
+            <i class='fas fa-users text-center' style="font-size: 25;"></i>
         </a>
-        <a href="{% url 'posts' %}" class="list-group-item list-group-item-action">posts</a>
-        <a href="{% url 'categories' %}" class="list-group-item list-group-item-action">categories</a>
-        <a href="{% url 'Fwords' %}" class="list-group-item list-group-item-action">Forbidden word</a>
+       
+       
+        <a href="{% url 'Fwords' %}" class="list-group-item list-group-item-action">Forbidden words
+            <i class='fas fa-exclamation-triangle'></i>
+
+        </a>
+
+
+        <a href="{% url 'posts' %}" class="list-group-item list-group-item-action">posts
+            <i class='far fa-address-card'></i></a>
+        </a>
+
+
+        <a href="{% url 'categories' %}" class="list-group-item list-group-item-action">categories 
+            <i class='fas fa-gifts '></i>
+        </a>
     </div>
-</ul>
+
+
+
 {% endblock %}
 
 <script>
