@@ -1,3 +1,4 @@
+
 {% extends 'BlogApp/main.html' %}
 {% load static %}
 
@@ -8,24 +9,26 @@
 {% block navbar %}
     {% include 'BlogApp/navbar.html' %}
 {% endblock %}
-
+fa-
 {% block main %}
-    <h2><b>Home</b> </h2>
+
+    <h1><b><i class="fas fa-house-user mt-3" style="font-size: 50;"></i>Home</b> </h1> 
+    
     <div class="row">
         <div class="col-md-3 col-sm-12 mr-2">
-            <h3>Categories</h3>
+            <h3 class="mt-5"><b>Categories</b> </h3>
                 <table class="table" style="font-size: larger;"> 
                 {% for category in all_categories %}
                 <tr>
-                    <td><a href="{% url 'enter-category' category.id %}" style="text-decoration: none;"><b>{{category.category}}</b> </a> </td>
+                    <td style="padding-top: 17;"><a href="{% url 'enter-category' category.id %}" style="text-decoration: none;" ><b>{{category.category}}</b> </a> </td>
                     {% if not request.user.is_anonymous %}
                             {% if category.id in all_subscribers %}
-                            <td><button type="button" class="btn btn-danger col-8" style="font-size: medium;"><a href="{% url 'unsubscribe' category.id %}" style="text-decoration: none; color:white;">Unsubscribe</a></button></td>
+                            <td><button type="button" class="btn btn-danger col-9 col-md-11 col" style="font-size: medium;"><a href="{% url 'unsubscribe' category.id %}" style="text-decoration: none; color:white;">Unsubscribe</a></button></td>
                             {% else %}
-                            <td><button type="button" class="btn btn-primary col-8" style="font-size: medium;"><a href="{% url 'subscribe' category.id %}" style="text-decoration: none; color:white;">Subscribe</a></button></td>
+                            <td><button type="button" class="btn btn-primary col-9 col-md-11" style="font-size: medium;"><a href="{% url 'subscribe' category.id %}" style="text-decoration: none; color:white;">Subscribe</a></button></td>
                             {% endif %}
                     {% else %}
-                         <td><a href="{% url 'login' %}" style="text-decoration: none; font-size: smaller;">login to subscribe</a></td>
+                         <td style="padding-top: 17;"><a href="{% url 'login' %}" style="text-decoration: none; font-size: smaller;">login to subscribe</a></td>
                     {% endif %}
                 </tr>
                 {% endfor %}
@@ -34,7 +37,7 @@
         <div class="col-9">
             <div class="row"> {% for post in all_posts %}
        
-                <div class="col-md-6 col-lg-4 col-sm-12 ">
+                <div class="col-md-5 col-lg-4 col-sm-12 ">
                     <div class="card mb-4" style="background: rgba(233, 233, 233, 0.322); ">
                       
                       <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">

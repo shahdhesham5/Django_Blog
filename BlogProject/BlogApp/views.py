@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group, User #User model to access users and admins
+import re 
 
  
 #authentications
@@ -51,6 +52,7 @@ def loginPage(request):
                 if request.GET.get('next') is not None:
                     return redirect(request.GET.get('next'))
                 else:
+                    # return redirect(request.META.get('HTTP_REFERER'), history = -2)  #to stay in the same page after logging in
                     return redirect('home')
         #if not, show this flash message
         else:
@@ -63,7 +65,10 @@ def loginPage(request):
 #redirect to home-page after logout, as an AnonymousUser
 def logoutuser(request):
     logout(request)
-    return redirect('home')
+    return redirect(request.META.get('HTTP_REFERER'))  #to stay in the same page after logging out
+    
+    # return redirect('home')
+
 
 
 # Create your views here.
@@ -83,6 +88,8 @@ def deleteUser(request, user_id):
     user = User.objects.get(id = user_id)
     user.delete()
     return redirect('showusers')
+
+
 #makeadmin 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
@@ -93,8 +100,11 @@ def makeadmin(request, user_id):
     user.is_staff = True
     user.is_superuser = True
     #if the user was blocked before, they will be unblocked
-    group = Group.objects.get(name='blockedusers')
-    user.groups.remove(group)
+    try:
+        group = Group.objects.get(name='blockedusers')
+        user.groups.remove(group)
+    except:
+        pass
     user.save()
     return redirect('showusers')
 
@@ -150,30 +160,21 @@ def post(request,post_id):
             break
     # if adding comment
     if request.method == "POST":
-        
         form = CommentForm(request.POST , request.FILES)
         if form.is_valid():
             comment = form.save(commit=False) # to insert the ForeignKey of post and user before saving comment
+            entered_comment= form.cleaned_data['comment_info'] #grapping the comment the user entered
+            forbidden_words=list (Fwords.objects.values_list('fword', flat=True)) 
+            #looping to remove any forbidden words
+            for i in forbidden_words:
+                # entered_comment = entered_comment.replace(i, len(i) * "*")
+                entered_comment = re.sub(i, len(i)*"*" ,entered_comment, flags=re.IGNORECASE)
+            comment.comment_info =  entered_comment #comment after filtration
             comment.user = request.user
             comment.post = post
             comment.save()
     # show comments again after adding comment
     comments = Comment.objects.filter(post = post_id)
-    fword= Fwords.objects.all()
-    # print(fword)
-    forbidden_words=[]
-    for i in fword:
-        forbidden_words.append(i)
-        print(forbidden_words)
-        for j in forbidden_words:
-            print(j)
-    for x in comments:
-        print (x)
-    if x == j :
-        x.replace('****')
-    else:
-        pass
-
     form = CommentForm()
     tags = Tag.objects.filter(tags__id=post_id )
     context = {'post': post, 'comments': comments, 'form': form ,'totallikes':totallikes,'totaldislikes':totaldislikes,'is_like':is_like,'is_dislike':is_dislike, 'tags':tags, 'form': form} 
@@ -321,7 +322,20 @@ def addpost(request):
         form = PostForm(request.POST , request.FILES)
         form2 = TagForm(request.POST)
         if form.is_valid():
+            #1
             post = form.save(commit=False)
+            forbidden_words=list (Fwords.objects.values_list('fword', flat=True))
+            entered_title= form.cleaned_data['title'] #grapping the title the user entered
+            #looping to remove any forbidden words
+            for i in forbidden_words:
+                entered_title = re.sub(i, len(i)*"*" ,entered_title, flags=re.IGNORECASE)
+            post.title =  entered_title #title after filtration
+            #2
+            entered_content= form.cleaned_data['content'] #grapping the comment the user entered
+            #looping to remove any forbidden words
+            for i in forbidden_words:
+                entered_content = re.sub(i, len(i)*"*" ,entered_content, flags=re.IGNORECASE)
+            post.content =  entered_content #content after filtration
             post.user = request.user
             post.save()
             post.tag.clear()
@@ -333,6 +347,7 @@ def addpost(request):
                 post.tag.add(tag)
             if form2.is_valid():
                 tagsArray = form2.cleaned_data['tag_item']
+
                 tags = tagsArray.split(",")
                 for tag in tags:
                     tag_item = Tag.objects.create(tag_item= tag)
@@ -365,6 +380,19 @@ def updatepost(request,post_id):
         form2 = TagForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
+            #1
+            forbidden_words=list (Fwords.objects.values_list('fword', flat=True))
+            entered_title= form.cleaned_data['title'] #grapping the title the user entered
+            #looping to remove any forbidden words
+            for i in forbidden_words:
+                entered_title = re.sub(i, len(i)*"*" ,entered_title, flags=re.IGNORECASE)
+            post.title =  entered_title #title after filtration
+            #2
+            entered_content= form.cleaned_data['content'] #grapping the comment the user entered
+            #looping to remove any forbidden words
+            for i in forbidden_words:
+                entered_content = re.sub(i, len(i)*"*" ,entered_content, flags=re.IGNORECASE)
+            post.content =  entered_content #content after filtration
             post.user = request.user
             post.save()
             post.tag.clear()
@@ -391,17 +419,6 @@ def updatepost(request,post_id):
         context = {'form': form, 'form2': form2}
         return render(request,"BlogApp/updatepost.html",context)
 
-
-
-#searchforPosts
-# @login_required(login_url='login')
-# def searchforposts(request):
-#     keyword = request.GET.get("keyword")
-#     if keyword:
-#         Posts = Posts.objects.filter(title__contains = keyword)
-#         return render(request,"posts.html",{"Posts":Posts})
-#     Posts = Posts.objects.all()
-#     return render(request, 'BlogApp/posts.html',{"Posts":Posts})
 
 
 #show categories
@@ -467,11 +484,11 @@ def search(request):
         tags = Tag.objects.all()
         
         for tag in tags:
-            if selected in tag.tag_item:
+            if selected.lower() in tag.tag_item.lower():
                 sel = Post.objects.filter(tag=tag)
                 searchResults = searchResults | sel
         for post in posts:
-            if selected in post.title:
+            if selected.lower() in post.title.lower():
                 sel = Post.objects.filter(title=post.title)
                 searchResults = searchResults | sel
         if not searchResults:
