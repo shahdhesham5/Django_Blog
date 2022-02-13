@@ -51,6 +51,7 @@ def loginPage(request):
                 if request.GET.get('next') is not None:
                     return redirect(request.GET.get('next'))
                 else:
+                    # return redirect(request.META.get('HTTP_REFERER'), history = -2)  #to stay in the same page after logging in
                     return redirect('home')
         #if not, show this flash message
         else:
@@ -63,7 +64,10 @@ def loginPage(request):
 #redirect to home-page after logout, as an AnonymousUser
 def logoutuser(request):
     logout(request)
-    return redirect('home')
+    return redirect(request.META.get('HTTP_REFERER'))  #to stay in the same page after logging out
+    
+    # return redirect('home')
+
 
 
 # Create your views here.
@@ -93,8 +97,11 @@ def makeadmin(request, user_id):
     user.is_staff = True
     user.is_superuser = True
     #if the user was blocked before, they will be unblocked
-    group = Group.objects.get(name='blockedusers')
-    user.groups.remove(group)
+    try:
+        group = Group.objects.get(name='blockedusers')
+        user.groups.remove(group)
+    except:
+        pass
     user.save()
     return redirect('showusers')
 

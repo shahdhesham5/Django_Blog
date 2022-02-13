@@ -1,6 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light  fixed-top  justify-content-between">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'home' %}">{% if request.user.is_superuser%} <i class="fas fa-user col-2 m-1" style="font-size: 20;">{% endif%}</i><b>{{request.user|title}}</b> </a> <i class="fa-solid fa-user"></i>
+        <a class="navbar-brand" href="{% url 'home' %}">{% if request.user.is_superuser%} <i
+                class="fas fa-user col-2 m-1" style="font-size: 20;">{% endif%}</i><b>{{request.user|title}}</b> </a> <i
+            class="fa-solid fa-user"></i>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -18,18 +20,20 @@
                 </li>
                 {% endif %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'addpost' %}">New Post <i class="fas fa-solid fa-plus" style="font-size: 12;"></i> </a> 
+                    <a class="nav-link" href="{% url 'addpost' %}">New Post <i class="fas fa-solid fa-plus"
+                            style="font-size: 12;"></i> </a>
                 </li>
             </ul>
-            
-                <form class="d-flex" style="margin-top: 3px; margin-bottom: 3px;" action="{% url 'search' %}" method="POST">
-                    {% csrf_token %}
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" value="{{searchValue}}" name="selected">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                  </form>
-            
+
+            <form class="d-flex" style="margin-top: 3px; margin-bottom: 3px;" action="{% url 'search' %}" method="POST">
+                {% csrf_token %}
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+                    value="{{searchValue}}" name="selected">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+
             <ul class="navbar-nav mr-auto mb-2 mb-lg-0 pb-0">
-               
+
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Log out</a>
                 </li>
@@ -37,14 +41,15 @@
             {% else %}
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'posts' %}">Posts</a>
+                    <a class="nav-link" href="{% url 'posts' %}">Posts <i class='far fa-address-card'></i></a>
                 </li>
             </ul>
             <form class="d-flex" style="margin-top: 3px; margin-bottom: 3px;" action="{% url 'search' %}" method="POST">
                 {% csrf_token %}
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" value="{{searchValue}}" name="selected">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+                    value="{{searchValue}}" name="selected">
                 <button class="btn btn-outline-success" type="submit">Search</button>
-              </form>
+            </form>
             <ul class="navbar-nav mr-auto mb-2 mb-lg-0 pb-0">
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page" href="{% url 'register' %}">Sign up</a>
@@ -58,3 +63,15 @@
         </div>
     </div>
 </nav>
+<a onclick="history.back()" href="#" id="backButton">Go Back</a>
+<script>
+    window.onload = (event) => {
+        var button = document.getElementById("backButton")
+        var location = window.location.href
+        if(location.includes("/blogapp/home")){
+            button.style.display ="none"
+        }
+    }
+    
+
+</script>
