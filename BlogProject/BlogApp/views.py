@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group, User #User model to access users and admins
+import re 
 
  
 #authentications
@@ -87,6 +88,8 @@ def deleteUser(request, user_id):
     user = User.objects.get(id = user_id)
     user.delete()
     return redirect('showusers')
+
+
 #makeadmin 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
@@ -160,6 +163,13 @@ def post(request,post_id):
         form = CommentForm(request.POST , request.FILES)
         if form.is_valid():
             comment = form.save(commit=False) # to insert the ForeignKey of post and user before saving comment
+            entered_comment= form.cleaned_data['comment_info'] #grapping the comment the user entered
+            forbidden_words=list (Fwords.objects.values_list('fword', flat=True)) 
+            #looping to remove any forbidden words
+            for i in forbidden_words:
+                # entered_comment = entered_comment.replace(i, len(i) * "*")
+                entered_comment = re.sub(i, len(i)*"*" ,entered_comment, flags=re.IGNORECASE)
+            comment.comment_info =  entered_comment #comment after filtration
             comment.user = request.user
             comment.post = post
             comment.save()
@@ -312,7 +322,20 @@ def addpost(request):
         form = PostForm(request.POST , request.FILES)
         form2 = TagForm(request.POST)
         if form.is_valid():
+            #1
             post = form.save(commit=False)
+            forbidden_words=list (Fwords.objects.values_list('fword', flat=True))
+            entered_title= form.cleaned_data['title'] #grapping the title the user entered
+            #looping to remove any forbidden words
+            for i in forbidden_words:
+                entered_title = re.sub(i, len(i)*"*" ,entered_title, flags=re.IGNORECASE)
+            post.title =  entered_title #title after filtration
+            #2
+            entered_content= form.cleaned_data['content'] #grapping the comment the user entered
+            #looping to remove any forbidden words
+            for i in forbidden_words:
+                entered_content = re.sub(i, len(i)*"*" ,entered_content, flags=re.IGNORECASE)
+            post.content =  entered_content #content after filtration
             post.user = request.user
             post.save()
             post.tag.clear()
@@ -324,6 +347,7 @@ def addpost(request):
                 post.tag.add(tag)
             if form2.is_valid():
                 tagsArray = form2.cleaned_data['tag_item']
+
                 tags = tagsArray.split(",")
                 for tag in tags:
                     tag_item = Tag.objects.create(tag_item= tag)
@@ -356,6 +380,19 @@ def updatepost(request,post_id):
         form2 = TagForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
+            #1
+            forbidden_words=list (Fwords.objects.values_list('fword', flat=True))
+            entered_title= form.cleaned_data['title'] #grapping the title the user entered
+            #looping to remove any forbidden words
+            for i in forbidden_words:
+                entered_title = re.sub(i, len(i)*"*" ,entered_title, flags=re.IGNORECASE)
+            post.title =  entered_title #title after filtration
+            #2
+            entered_content= form.cleaned_data['content'] #grapping the comment the user entered
+            #looping to remove any forbidden words
+            for i in forbidden_words:
+                entered_content = re.sub(i, len(i)*"*" ,entered_content, flags=re.IGNORECASE)
+            post.content =  entered_content #content after filtration
             post.user = request.user
             post.save()
             post.tag.clear()
@@ -382,17 +419,6 @@ def updatepost(request,post_id):
         context = {'form': form, 'form2': form2}
         return render(request,"BlogApp/updatepost.html",context)
 
-
-
-#searchforPosts
-# @login_required(login_url='login')
-# def searchforposts(request):
-#     keyword = request.GET.get("keyword")
-#     if keyword:
-#         Posts = Posts.objects.filter(title__contains = keyword)
-#         return render(request,"posts.html",{"Posts":Posts})
-#     Posts = Posts.objects.all()
-#     return render(request, 'BlogApp/posts.html',{"Posts":Posts})
 
 
 #show categories
@@ -458,11 +484,11 @@ def search(request):
         tags = Tag.objects.all()
         
         for tag in tags:
-            if selected in tag.tag_item:
+            if selected.lower() in tag.tag_item.lower():
                 sel = Post.objects.filter(tag=tag)
                 searchResults = searchResults | sel
         for post in posts:
-            if selected in post.title:
+            if selected.lower() in post.title.lower():
                 sel = Post.objects.filter(title=post.title)
                 searchResults = searchResults | sel
         if not searchResults:
