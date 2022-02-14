@@ -24,9 +24,9 @@
                   <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
                 </a>
               </div>
-              <h4 class="card-title" >{{post.title}}</h4>
-              <small class="card-title">{{post.created_on}}</small>
-                <p class="card-text" style="white-space: nowrap;
+              <h4 class="card-title m-1" >{{post.title}}</h4>
+              <small class="card-title m-1">{{post.created_on}}</small>
+                <p class="card-text m-2" style="white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;  ">
                   {{post.content}}
@@ -36,8 +36,8 @@
                 
                 <div  class="text-center">
                     {% if post.user == request.user or  user.is_superuser %}
-                    <a class="btn btn-info " href="{% url 'deletepost' post.id %}">Delete</a>
-                    <a class="btn btn-info " href="{% url 'updatepost' post.id %}">Update</a>
+                    <a class="btn btn-danger " href="{% url 'deletepost' post.id %}"> <i class='fas fa-trash'></i></a>
+                    <a class="btn btn-primary " href="{% url 'updatepost' post.id %}"><i class='fas fa-pen'></i></a>
                     {% endif %}
 
                 </div>

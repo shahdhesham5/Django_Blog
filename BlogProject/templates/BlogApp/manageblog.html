@@ -13,7 +13,7 @@
 <h2>Manage blog</h2>
 
     <div class="col-7 mt-5 ">
-        <a href="{% url 'showusers' %}" class="list-group-item list-group-item-action" aria-current="true">users
+        <a href="{% url 'showusers' %}" class="list-group-item list-group-item-action" aria-current="true">Users
             <i class='fas fa-users text-center' style="font-size: 20;"></i>
         </a>
        
@@ -24,13 +24,17 @@
         </a>
 
 
-        <a href="{% url 'posts' %}" class="list-group-item list-group-item-action">posts
+        <a href="{% url 'posts' %}" class="list-group-item list-group-item-action">Posts
             <i class='far fa-address-card'></i></a>
         </a>
 
 
-        <a href="{% url 'categories' %}" class="list-group-item list-group-item-action">categories 
+        <a href="{% url 'categories' %}" class="list-group-item list-group-item-action">Categories 
             <i class='fas fa-gifts '></i>
+        </a>
+
+        <a href="{% url 'tags' %}" class="list-group-item list-group-item-action">Tags 
+            <i class='fas fa-hashtag'></i>
         </a>
     </div>
 

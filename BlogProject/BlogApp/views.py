@@ -1,14 +1,18 @@
+from multiprocessing import context
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
+from django.test import tag
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
 from BlogApp.models import Category, Post , Comment, Fwords, Tag, Subscribers
-from .forms import CommentForm, CreateUserForm,CategoryForm, FwordsForm,PostForm ,  TagForm#the modified UserCreationForm
+from .forms import CommentForm, CreateUserForm,CategoryForm, FwordsForm,PostForm , TagForm#the modified UserCreationForm
 #authentication
 from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group, User #User model to access users and admins
+#send email
+from django.core.mail import send_mail
 import re 
 
  
@@ -260,6 +264,14 @@ def categories(request):
 def subscribe(request, cat_id):
     category = Category.objects.get(id = cat_id)
     subscriber = Subscribers.objects.create(category=category,subscriber=request.user)
+    email = request.user.email
+    send_mail(
+    'Subscription Successful!',
+    f'Hello {request.user} Thank you for subscribing to {category}, welcome on board',
+    'djangoblog2022@gmail.com',
+    [f'{email}'],
+    fail_silently=False,
+)
     return redirect ('home')
 
 #Unsubscribe to a category
@@ -305,6 +317,68 @@ def delectCat(request, cat_id):
     category = Category.objects.get(id=cat_id)
     category.delete()
     return redirect('categories')
+
+#edit category
+@allowed_users(allowed_roles=['admin'])
+def editCat(request, cat_id):
+    category =  Category.objects.get(id=cat_id)
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, instance=category)
+        if form.is_valid:
+            form.save()
+            return redirect('categories')
+    else:
+        form = CategoryForm(instance=category)
+        context = {'form': form}
+        return render (request, 'BlogApp/editCat.html', context)
+
+#show tags for admin
+@allowed_users(allowed_roles=['admin'])
+def tags(request):
+    all_tags = Tag.objects.all()
+    context = {'all_tags':all_tags}
+    return render (request,'BlogApp/showtags.html', context)
+
+#addtag
+def addtag(request):
+    if request.method == 'POST':
+        input = request.POST.get("tag_item")
+        try:
+            x = Tag.objects.get(tag_item=input) #if tag already exists
+            messages.info(request, 'Tag already exists')
+            return redirect('addtag')
+        except:
+            form = TagForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('tags')
+    else:
+        form = TagForm()
+        context = {'form':form}
+        return render (request, 'BlogApp/addtag.html', context)
+    
+#delete tag by admin
+@allowed_users(allowed_roles=['admin'])
+def deltag(request,tag_id):
+    tag = Tag.objects.get(id=tag_id)
+    tag.delete()
+    return redirect ('tags')
+
+
+
+#edit tag by admin
+@allowed_users(allowed_roles=['admin'])
+def editTag(request, tag_id):
+    tag = Tag.objects.get(id=tag_id)
+    if request.method == 'POST':
+        form = TagForm(request.POST, instance=tag)
+        if form.is_valid:
+            form.save()
+            return redirect('tags')
+    else:
+        form = TagForm(instance=tag)
+        context = {'form': form}
+        return render (request, 'BlogApp/edit-tag.html', context)
 
 
 #show posts
@@ -449,6 +523,20 @@ def addFword(request):
         form = FwordsForm()
         context = {'form': form}
         return render (request, 'BlogApp/add-fword.html', context)
+
+#edit Forbidden Words 
+@allowed_users(allowed_roles=['admin'])
+def editFwords(request, fword_id):
+    # grapping the word that want 
+    fword= Fwords.objects.get(id=fword_id) 
+    if request.method == 'POST':
+        form = FwordsForm(request.POST, instance=fword)
+        if form.is_valid():
+            form.save()
+        return redirect('Fwords')
+    form = FwordsForm(instance=fword)
+    context = {'form': form}
+    return render(request, 'BlogApp/add-fword.html', context)
 
 
 @allowed_users(allowed_roles=['admin'])

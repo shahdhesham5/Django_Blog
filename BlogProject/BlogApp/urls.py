@@ -16,12 +16,16 @@ urlpatterns = [
     path('enter-category/<cat_id>', views.enterCat, name='enter-category'),
     path('subscribe/<cat_id>/', views.subscribe, name='subscribe'),
     path('unsubscribe/<cat_id>/', views.unsubscribe, name='unsubscribe'),
-    #categories
+    #crud on categories
     path('categories/', views.categories, name='categories'),
     path('add-cat/', views.addCat, name='add-cat'),
-    # path('edit-cat/<cat_id>', views.editCat, name='edit-cat'),
+    path('edit-cat/<cat_id>', views.editCat, name='edit-cat'),
     path('delete-cat/<cat_id>', views.delectCat, name='delete-cat'),
-
+    #crud on tags
+    path('tags/', views.tags, name='tags'),
+    path('addtag/', views.addtag, name='addtag'),
+    path('deltag/<tag_id>', views.deltag, name='deltag'),
+    path('edit-tag/<tag_id>', views.editTag, name='edit-tag'),
     #authentication
     path('register/', views.register, name='register'),
     path('login/', views.loginPage, name='login'),
@@ -37,8 +41,10 @@ urlpatterns = [
     path('Fwords/', views.fwords, name='Fwords'),
     path('add-Fwords/', views.addFword, name='add-fword'),
     path('del-Fword/<fword_id>', views.delFword, name='del-Fword'),
+    path('edit-Fwords/<fword_id>',views.editFwords,name='edit-Fwords'),
     #search for tags and post titles 
     path('search/', views.search, name='search'),
+
 
 
     

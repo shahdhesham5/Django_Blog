@@ -87,7 +87,7 @@
                     <a class="nav-link" aria-current="page" href="{% url 'register' %}">Sign up</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{% url 'login' %}"> <i class="fas fa-right-to-bracket"></i>Login</a>
+                    <a class="nav-link" aria-current="page" href="{% url 'login' %}"> Login <i class='fas fa-user'></i> </a>
                 </li>
 
             </ul>
@@ -95,7 +95,7 @@
         </div>
     </div>
 </nav>
-<a onclick="history.back()" href="#" id="backButton"  class="btn btn-secondary "><i class="fas fa-angle-left"></i> Back</a>
+<a onclick="history.back()" href="#" id="backButton"  class="btn btn-secondary m-2"><i class="fas fa-angle-left"></i> Back</a>
 <script>
     window.onload = (event) => {
         var button = document.getElementById("backButton")
