@@ -51,7 +51,7 @@ class Comment(models.Model):
 class Subscribers(models.Model):
     subscriber = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-
+    
 
 class Messages(models.Model):
     pass

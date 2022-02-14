@@ -25,6 +25,9 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['comment_info']
+
+
+
 class TagForm(forms.ModelForm):
     class Meta:
         model = Tag
@@ -32,6 +35,7 @@ class TagForm(forms.ModelForm):
         widgets = {
             'tag_item': forms.TextInput(attrs={'class': 'form-control', 'data-role':'tagsinput'})
         }
+        
 #a form to add a category
 class CategoryForm(forms.ModelForm):
     class Meta:
