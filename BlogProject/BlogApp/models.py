@@ -37,7 +37,7 @@ class Post(models.Model):
         return self.title      
 
     class Meta:
-        ordering = ('title',)
+        ordering = ('-created_on',)
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
