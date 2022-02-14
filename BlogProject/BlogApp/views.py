@@ -6,6 +6,7 @@ from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
 from BlogApp.models import Category, Post , Comment, Fwords, Tag, Subscribers
 from .forms import CommentForm, CreateUserForm,CategoryForm, FwordsForm,PostForm , TagForm#the modified UserCreationForm
 import re 
+from django.core.paginator import Paginator
 #authentication
 from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm
 from django.contrib import messages
@@ -132,18 +133,26 @@ def unblockUser(request, user_id):
     user.groups.remove(group)
     return redirect ('showusers')
 
+
+
+
 #home
 def home(request):
     all_categories = Category.objects.all()
     all_posts = Post.objects.all()
+    paginator = Paginator(all_posts, 4)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+    context = {
+        'page':page,
+        'page_number':page_number}
+    print(page)
     if not request.user.is_anonymous:
         all_subscribers = Subscribers.objects.filter(subscriber=request.user).values_list('category_id', flat=True)
         context = {'all_categories':all_categories, 'all_subscribers':all_subscribers,'all_posts':all_posts}
     else:
-        context = {'all_categories':all_categories,'all_posts':all_posts}
+        context = {'all_categories':all_categories,'all_posts':all_posts }
     return render(request, 'BlogApp/home.html',context)
-
-
 
 #Post details
 def post(request,post_id):

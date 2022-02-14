@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User #User model to access users and admins
 from django.utils import timezone
+from django.views.generic import ListView
+
 
 class Category(models.Model):
     category = models.CharField(max_length=20)
@@ -27,8 +29,10 @@ class Post(models.Model):
     likes = models.ManyToManyField(User , related_name='blog_like')
     dislikes = models.ManyToManyField(User , related_name='blog_dislike')
 
+
     def total_likes(self):
         return self.likes.count()
+
         
     def total_dislikes(self):
         return self.dislikes.count()
@@ -38,6 +42,7 @@ class Post(models.Model):
 
     class Meta:
         ordering = ('-created_on',)
+
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
