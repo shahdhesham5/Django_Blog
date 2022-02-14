@@ -530,14 +530,22 @@ def addFword(request):
 def editFwords(request, fword_id):
     # grapping the word that want 
     fword= Fwords.objects.get(id=fword_id) 
+    word = list(Fwords.objects.values_list('fword', flat=True))
     if request.method == 'POST':
         form = FwordsForm(request.POST, instance=fword)
-        if form.is_valid():
+        x = request.POST.get('fword')
+        if x in  word :
+            messages.info(request, 'it is already exists')
+            return redirect('add-fword')
+        else:
+            form = FwordsForm(request.POST, instance=fword)
+            form.is_valid()
             form.save()
-        return redirect('Fwords')
-    form = FwordsForm(instance=fword)
-    context = {'form': form}
-    return render(request, 'BlogApp/add-fword.html', context)
+            return redirect('Fwords')
+    else:
+        form = FwordsForm(instance=fword)
+        context = {'form': form}
+        return render(request, 'BlogApp/add-fword.html', context)
 
 #forbidden words
 def delFword(request, fword_id):
