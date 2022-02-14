@@ -5,13 +5,13 @@ from django.test import tag
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
 from BlogApp.models import Category, Post , Comment, Fwords, Tag, Subscribers
 from .forms import CommentForm, CreateUserForm,CategoryForm, FwordsForm,PostForm , TagForm#the modified UserCreationForm
+import re 
 #authentication
 from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group, User #User model to access users and admins
-import re 
 
  
 #authentications
@@ -487,7 +487,7 @@ def updatepost(request,post_id):
 
 
 
-#show categories
+#show Forbidden words
 @allowed_users(allowed_roles=['admin'])
 def fwords(request):
     all_fwords = Fwords.objects.all()
@@ -495,7 +495,7 @@ def fwords(request):
     return render (request,'BlogApp/Fwords.html', context)
 
 
-#add Forbbiden Wordss
+#add Forbbiden Words
 @allowed_users(allowed_roles=['admin'])
 def addFword(request):
     if request.method == 'POST': #if submited, check the inputs, validate form, then save
@@ -527,26 +527,6 @@ def editFwords(request, fword_id):
     form = FwordsForm(instance=fword)
     context = {'form': form}
     return render(request, 'BlogApp/add-fword.html', context)
-
-
-@allowed_users(allowed_roles=['admin'])
-def addCat(request):
-    if request.method == 'POST': #if submited, check the inputs, validate form, then save
-        input = request.POST.get("category") #getting the category the customer trying to add
-        try:
-            x = Category.objects.get(category=input) #if category already exists
-            messages.info(request, 'Category already exists')
-            return redirect('add-cat')
-        except:
-            form = CategoryForm(request.POST)
-            if form.is_valid():
-                form.save()
-                return redirect('categories')
-    else:
-        form = CategoryForm()
-        context = {'form': form}
-        return render (request, 'BlogApp/addcat.html', context)
-
 
 #forbidden words
 def delFword(request, fword_id):
