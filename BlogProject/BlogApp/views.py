@@ -12,6 +12,9 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group, User #User model to access users and admins
+#send email
+from django.core.mail import send_mail
+import re 
 
  
 #authentications
@@ -262,6 +265,14 @@ def categories(request):
 def subscribe(request, cat_id):
     category = Category.objects.get(id = cat_id)
     subscriber = Subscribers.objects.create(category=category,subscriber=request.user)
+    email = request.user.email
+    send_mail(
+    'Subscription Successful!',
+    f'Hello {request.user} Thank you for subscribing to {category}, welcome on board',
+    'djangoblog2022@gmail.com',
+    [f'{email}'],
+    fail_silently=False,
+)
     return redirect ('home')
 
 #Unsubscribe to a category
