@@ -307,6 +307,20 @@ def delectCat(request, cat_id):
     return redirect('categories')
 
 
+#edit category
+@allowed_users(allowed_roles=['admin'])
+def editCat(request, cat_id):
+    category =  Category.objects.get(id=cat_id)
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, instance=category)
+        if form.is_valid:
+            form.save()
+            return redirect('categories')
+    else:
+        form = CategoryForm(instance=category)
+        context = {'form': form}
+        return render (request, 'BlogApp/editCat.html', context)
+
 #show posts
 def posts(request):
     all_posts = Post.objects.all()
