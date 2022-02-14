@@ -1,7 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-
 from .models import Category, Comment, Post ,Fwords, Tag
 #a modified UserCreationForm so we can add a new field(email)
 class CreateUserForm(UserCreationForm):
@@ -12,18 +11,31 @@ class CreateUserForm(UserCreationForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title','content','post_img','category', 'tag']
+        fields = ['title','post_img','category','content', 'tag']
         widgets = {
-            'content': forms.Textarea(attrs={'name': 'body', 'rows': 10}),}
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'post_img': forms.FileInput(attrs={'class': 'form-control'}),
+            'category': forms.Select(attrs={'class': 'form-control'}),
+            'content': forms.Textarea(attrs={'class': 'form-control'}),
+            'tag': forms.SelectMultiple(attrs={'class': 'form-select'})
+            }
+
 
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['comment_info']
+
+
+
 class TagForm(forms.ModelForm):
     class Meta:
         model = Tag
         fields = ['tag_item']
+        widgets = {
+            'tag_item': forms.TextInput(attrs={'class': 'form-control', 'data-role':'tagsinput'})
+        }
+        
 #a form to add a category
 class CategoryForm(forms.ModelForm):
     class Meta:

@@ -1,0 +1,23 @@
+{% extends 'BlogApp/main.html' %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <title>Add Tag</title>
+{% endblock %}
+
+{% block navbar %}
+    {% include 'BlogApp/navbar.html' %}
+{% endblock %}
+
+{% block main %}
+    <h2><b>Add Tag</b> </h2>
+    <form method="POST"> {% csrf_token %}
+        {{ form.as_p }}
+        {% for message in messages %}
+        <p id="messages">{{message}}</p>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">save</button>
+        <button type="reset" class="btn btn-danger">cancel</button>
+    </form>
+{% endblock %}

@@ -1,15 +1,19 @@
-from this import s
+from multiprocessing import context
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
+from django.test import tag
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
 from BlogApp.models import Category, Post , Comment, Fwords, Tag, Subscribers
-from .forms import CommentForm, CreateUserForm,CategoryForm, FwordsForm,PostForm ,  TagForm#the modified UserCreationForm
+from .forms import CommentForm, CreateUserForm,CategoryForm, FwordsForm,PostForm , TagForm#the modified UserCreationForm
 #authentication
 from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group, User #User model to access users and admins
+#send email
+from django.core.mail import send_mail
+import re 
 
  
 #authentications
@@ -51,6 +55,7 @@ def loginPage(request):
                 if request.GET.get('next') is not None:
                     return redirect(request.GET.get('next'))
                 else:
+                    # return redirect(request.META.get('HTTP_REFERER'), history = -2)  #to stay in the same page after logging in
                     return redirect('home')
         #if not, show this flash message
         else:
@@ -63,7 +68,10 @@ def loginPage(request):
 #redirect to home-page after logout, as an AnonymousUser
 def logoutuser(request):
     logout(request)
-    return redirect('home')
+    return redirect(request.META.get('HTTP_REFERER'))  #to stay in the same page after logging out
+    
+    # return redirect('home')
+
 
 
 # Create your views here.
@@ -83,6 +91,8 @@ def deleteUser(request, user_id):
     user = User.objects.get(id = user_id)
     user.delete()
     return redirect('showusers')
+
+
 #makeadmin 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
@@ -93,8 +103,11 @@ def makeadmin(request, user_id):
     user.is_staff = True
     user.is_superuser = True
     #if the user was blocked before, they will be unblocked
-    group = Group.objects.get(name='blockedusers')
-    user.groups.remove(group)
+    try:
+        group = Group.objects.get(name='blockedusers')
+        user.groups.remove(group)
+    except:
+        pass
     user.save()
     return redirect('showusers')
 
@@ -153,6 +166,13 @@ def post(request,post_id):
         form = CommentForm(request.POST , request.FILES)
         if form.is_valid():
             comment = form.save(commit=False) # to insert the ForeignKey of post and user before saving comment
+            entered_comment= form.cleaned_data['comment_info'] #grapping the comment the user entered
+            forbidden_words=list (Fwords.objects.values_list('fword', flat=True)) 
+            #looping to remove any forbidden words
+            for i in forbidden_words:
+                # entered_comment = entered_comment.replace(i, len(i) * "*")
+                entered_comment = re.sub(i, len(i)*"*" ,entered_comment, flags=re.IGNORECASE)
+            comment.comment_info =  entered_comment #comment after filtration
             comment.user = request.user
             comment.post = post
             comment.save()
@@ -244,6 +264,14 @@ def categories(request):
 def subscribe(request, cat_id):
     category = Category.objects.get(id = cat_id)
     subscriber = Subscribers.objects.create(category=category,subscriber=request.user)
+    email = request.user.email
+    send_mail(
+    'Subscription Successful!',
+    f'Hello {request.user} Thank you for subscribing to {category}, welcome on board',
+    'djangoblog2022@gmail.com',
+    [f'{email}'],
+    fail_silently=False,
+)
     return redirect ('home')
 
 #Unsubscribe to a category
@@ -290,6 +318,68 @@ def delectCat(request, cat_id):
     category.delete()
     return redirect('categories')
 
+#edit category
+@allowed_users(allowed_roles=['admin'])
+def editCat(request, cat_id):
+    category =  Category.objects.get(id=cat_id)
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, instance=category)
+        if form.is_valid:
+            form.save()
+            return redirect('categories')
+    else:
+        form = CategoryForm(instance=category)
+        context = {'form': form}
+        return render (request, 'BlogApp/editCat.html', context)
+
+#show tags for admin
+@allowed_users(allowed_roles=['admin'])
+def tags(request):
+    all_tags = Tag.objects.all()
+    context = {'all_tags':all_tags}
+    return render (request,'BlogApp/showtags.html', context)
+
+#addtag
+def addtag(request):
+    if request.method == 'POST':
+        input = request.POST.get("tag_item")
+        try:
+            x = Tag.objects.get(tag_item=input) #if tag already exists
+            messages.info(request, 'Tag already exists')
+            return redirect('addtag')
+        except:
+            form = TagForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('tags')
+    else:
+        form = TagForm()
+        context = {'form':form}
+        return render (request, 'BlogApp/addtag.html', context)
+    
+#delete tag by admin
+@allowed_users(allowed_roles=['admin'])
+def deltag(request,tag_id):
+    tag = Tag.objects.get(id=tag_id)
+    tag.delete()
+    return redirect ('tags')
+
+
+
+#edit tag by admin
+@allowed_users(allowed_roles=['admin'])
+def editTag(request, tag_id):
+    tag = Tag.objects.get(id=tag_id)
+    if request.method == 'POST':
+        form = TagForm(request.POST, instance=tag)
+        if form.is_valid:
+            form.save()
+            return redirect('tags')
+    else:
+        form = TagForm(instance=tag)
+        context = {'form': form}
+        return render (request, 'BlogApp/edit-tag.html', context)
+
 
 #show posts
 def posts(request):
@@ -305,7 +395,20 @@ def addpost(request):
         form = PostForm(request.POST , request.FILES)
         form2 = TagForm(request.POST)
         if form.is_valid():
+            #1
             post = form.save(commit=False)
+            forbidden_words=list (Fwords.objects.values_list('fword', flat=True))
+            entered_title= form.cleaned_data['title'] #grapping the title the user entered
+            #looping to remove any forbidden words
+            for i in forbidden_words:
+                entered_title = re.sub(i, len(i)*"*" ,entered_title, flags=re.IGNORECASE)
+            post.title =  entered_title #title after filtration
+            #2
+            entered_content= form.cleaned_data['content'] #grapping the comment the user entered
+            #looping to remove any forbidden words
+            for i in forbidden_words:
+                entered_content = re.sub(i, len(i)*"*" ,entered_content, flags=re.IGNORECASE)
+            post.content =  entered_content #content after filtration
             post.user = request.user
             post.save()
             post.tag.clear()
@@ -317,6 +420,7 @@ def addpost(request):
                 post.tag.add(tag)
             if form2.is_valid():
                 tagsArray = form2.cleaned_data['tag_item']
+
                 tags = tagsArray.split(",")
                 for tag in tags:
                     tag_item = Tag.objects.create(tag_item= tag)
@@ -328,7 +432,10 @@ def addpost(request):
     else:
         form = PostForm()
         form2 = TagForm()
-        context = {'form': form, 'form2': form2}
+        forbidden_words=list (Fwords.objects.values_list('fword', flat=True))
+        fwords = ','.join(forbidden_words)
+        print( type(forbidden_words))
+        context = {'form': form, 'form2': form2, 'fwords':fwords}
         return render (request, 'BlogApp/addpost.html', context)
 
 
@@ -349,6 +456,19 @@ def updatepost(request,post_id):
         form2 = TagForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
+            #1
+            forbidden_words=list (Fwords.objects.values_list('fword', flat=True))
+            entered_title= form.cleaned_data['title'] #grapping the title the user entered
+            #looping to remove any forbidden words
+            for i in forbidden_words:
+                entered_title = re.sub(i, len(i)*"*" ,entered_title, flags=re.IGNORECASE)
+            post.title =  entered_title #title after filtration
+            #2
+            entered_content= form.cleaned_data['content'] #grapping the comment the user entered
+            #looping to remove any forbidden words
+            for i in forbidden_words:
+                entered_content = re.sub(i, len(i)*"*" ,entered_content, flags=re.IGNORECASE)
+            post.content =  entered_content #content after filtration
             post.user = request.user
             post.save()
             post.tag.clear()
@@ -374,6 +494,8 @@ def updatepost(request,post_id):
         form2 = TagForm()
         context = {'form': form, 'form2': form2}
         return render(request,"BlogApp/updatepost.html",context)
+
+
 
 #show categories
 @allowed_users(allowed_roles=['admin'])
@@ -401,6 +523,20 @@ def addFword(request):
         form = FwordsForm()
         context = {'form': form}
         return render (request, 'BlogApp/add-fword.html', context)
+
+#edit Forbidden Words 
+@allowed_users(allowed_roles=['admin'])
+def editFwords(request, fword_id):
+    # grapping the word that want 
+    fword= Fwords.objects.get(id=fword_id) 
+    if request.method == 'POST':
+        form = FwordsForm(request.POST, instance=fword)
+        if form.is_valid():
+            form.save()
+        return redirect('Fwords')
+    form = FwordsForm(instance=fword)
+    context = {'form': form}
+    return render(request, 'BlogApp/add-fword.html', context)
 
 
 @allowed_users(allowed_roles=['admin'])
@@ -438,11 +574,11 @@ def search(request):
         tags = Tag.objects.all()
         
         for tag in tags:
-            if selected in tag.tag_item:
+            if selected.lower() in tag.tag_item.lower():
                 sel = Post.objects.filter(tag=tag)
                 searchResults = searchResults | sel
         for post in posts:
-            if selected in post.title:
+            if selected.lower() in post.title.lower():
                 sel = Post.objects.filter(title=post.title)
                 searchResults = searchResults | sel
         if not searchResults:

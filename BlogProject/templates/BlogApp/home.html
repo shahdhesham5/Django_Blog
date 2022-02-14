@@ -1,3 +1,4 @@
+
 {% extends 'BlogApp/main.html' %}
 {% load static %}
 
@@ -10,31 +11,33 @@
 {% endblock %}
 
 {% block main %}
-    <h2><b>Home</b></h2>
+
+    <h1 class="fs-1"><b><i class="fas fa-house-user mt-3" style="font-size: 35;"></i>Home</b> </h1> 
+    
     <div class="row">
-        <div class="col-md-3 col-sm-12 mr-2">
-            <h3>Categories</h3>
+        <div class="col-md-4 col-sm-12 mr-2">
+            <h3 class="mt-5 fs-2"><b>Categories</b> </h3>
                 <table class="table" style="font-size: larger;"> 
                 {% for category in all_categories %}
-                <tr>
-                    <td><a href="{% url 'enter-category' category.id %}" style="text-decoration: none;"><b>{{category.category}}</b> </a> </td>
+                <tr class="col-9 col-md-11">
+                    <td style="padding-top: 17;"><a href="{% url 'enter-category' category.id %}" style="text-decoration: none;" ><b>{{category.category}}</b> </a> </td>
                     {% if not request.user.is_anonymous %}
                             {% if category.id in all_subscribers %}
-                            <td><a href="{% url 'unsubscribe' category.id %}" style="text-decoration: none;">UnSubscribe</a></td>
+                            <td><button type="button" class="btn btn-danger " style="font-size: small;"><a href="{% url 'unsubscribe' category.id %}" style="text-decoration: none; color:white;">Unsubscribe</a></button></td>
                             {% else %}
-                            <td><a href="{% url 'subscribe' category.id %}" style="text-decoration: none;">Subscribe</a></td>
+                            <td><button type="button" class="btn btn-primary " style="font-size: small;"><a href="{% url 'subscribe' category.id %}" style="text-decoration: none; color:white;">Subscribe</a></button></td>
                             {% endif %}
                     {% else %}
-                         <td><a href="{% url 'login' %}" style="text-decoration: none; font-size: smaller;">login to subscribe</a></td>
+                         <td style="padding-top: 17;"><a href="{% url 'login' %}" style="text-decoration: none; font-size: smaller;">login to subscribe</a></td>
                     {% endif %}
                 </tr>
                 {% endfor %}
                 </table>
         </div>
-        <div class="col-9">
+        <div class="col-8 col-md-8">
             <div class="row"> {% for post in all_posts %}
        
-                <div class="col-md-6 col-lg-4 col-sm-12 ">
+                <div class="col-md-5 col-lg-4 col-sm-12 ">
                     <div class="card mb-4" style="background: rgba(233, 233, 233, 0.322); ">
                       
                       <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
@@ -46,9 +49,9 @@
                           <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
                         </a>
                       </div>
-                      <h4 class="card-title" >{{post.title}}</h4>
-                      <small class="card-title">{{post.created_on}}</small>
-                        <p class="card-text" style="white-space: nowrap;
+                      <h4 class="card-title m-1" >{{post.title}}</h4>
+                      <span><small class="card-title m-1">{{post.created_on}}</small></span>
+                        <p class="card-text m-2" style="white-space: nowrap;
                         overflow: hidden;
                         text-overflow: ellipsis;  ">
                           {{post.content}}
@@ -58,8 +61,8 @@
                         
                         <div  class="text-center">
                             {% if post.user == request.user or  user.is_superuser %}
-                            <a class="btn btn-info " href="{% url 'deletepost' post.id %}">Delete</a>
-                            <a class="btn btn-info " href="{% url 'updatepost' post.id %}">Update</a>
+                            <a class="btn btn-danger " href="{% url 'deletepost' post.id %}"> <i class='fas fa-trash'></i></a>
+                            <a class="btn btn-primary " href="{% url 'updatepost' post.id %}"><i class='fas fa-pen'></i></a>
                             {% endif %}
         
                         </div>
