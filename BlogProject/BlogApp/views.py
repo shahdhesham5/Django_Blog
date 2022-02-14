@@ -1,6 +1,7 @@
 from multiprocessing import context
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
+from django.test import tag
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
 from BlogApp.models import Category, Post , Comment, Fwords, Tag, Subscribers
 from .forms import CommentForm, CreateUserForm,CategoryForm, FwordsForm,PostForm , TagForm#the modified UserCreationForm
@@ -328,7 +329,24 @@ def tags(request):
     context = {'all_tags':all_tags}
     return render (request,'BlogApp/showtags.html', context)
 
-
+#addtag
+def addtag(request):
+    if request.method == 'POST':
+        input = request.POST.get("tag_item")
+        try:
+            x = Tag.objects.get(tag_item=input) #if tag already exists
+            messages.info(request, 'Tag already exists')
+            return redirect('addtag')
+        except:
+            form = TagForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('tags')
+    else:
+        form = TagForm()
+        context = {'form':form}
+        return render (request, 'BlogApp/addtag.html', context)
+    
 #delete tag by admin
 @allowed_users(allowed_roles=['admin'])
 def deltag(request,tag_id):

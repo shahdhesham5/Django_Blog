@@ -23,6 +23,7 @@ urlpatterns = [
     path('delete-cat/<cat_id>', views.delectCat, name='delete-cat'),
     #crud on tags
     path('tags/', views.tags, name='tags'),
+    path('addtag/', views.addtag, name='addtag'),
     path('deltag/<tag_id>', views.deltag, name='deltag'),
     path('edit-tag/<tag_id>', views.editTag, name='edit-tag'),
     #authentication
