@@ -271,7 +271,7 @@ def unsubscribe(request, cat_id):
     return redirect ('home')
 
 
-#view category posts
+#enter category
 def enterCat(request, cat_id):
     category = Category.objects.get(id = cat_id)
     category_posts = Post.objects.filter(category_id=cat_id)
@@ -298,31 +298,6 @@ def addCat(request):
         context = {'form': form}
         return render (request, 'BlogApp/addcat.html', context)
 
-#edit category
-@allowed_users(allowed_roles=['admin'])
-def editCat(request,cat_id):
-    #category to be edited
-    category = Category.objects.get(id=cat_id) 
-    #if submited, check the input
-    if request.method == 'POST': 
-        #getting the category the user trying to add
-        input = request.POST.get("category")
-        print(input)
-        try:
-            #if category already exists
-            x = Category.objects.filter(category=input) 
-            print(x)
-            messages.info(request, 'Category already exists')
-            return redirect('edit-cat')
-        except:
-            form = CategoryForm(request.POST, instance=category)
-            if form.is_valid():
-                form.save()
-                return redirect('categories')
-    else:
-        form = CategoryForm(instance=category)
-        context = {'form': form}
-        return render (request, 'BlogApp/editCat.html', context)
 
 #delete category
 @allowed_users(allowed_roles=['admin'])
@@ -343,17 +318,11 @@ def posts(request):
 @login_required(login_url='login')
 def addpost(request):
     if request.method == 'POST': #if submited, check the inputs, validate form, then save
-        print("1")
         form = PostForm(request.POST , request.FILES)
-        print("2")
         form2 = TagForm(request.POST)
-        print("3")
-        print(form)
         if form.is_valid():
             #1
-            print("4")
             post = form.save(commit=False)
-            print("5")
             forbidden_words=list (Fwords.objects.values_list('fword', flat=True))
             entered_title= form.cleaned_data['title'] #grapping the title the user entered
             #looping to remove any forbidden words
@@ -365,41 +334,26 @@ def addpost(request):
             #looping to remove any forbidden words
             for i in forbidden_words:
                 entered_content = re.sub(i, len(i)*"*" ,entered_content, flags=re.IGNORECASE)
-            print("6")
             post.content =  entered_content #content after filtration
-            print("7")
             post.user = request.user
-            print("8")
             post.save()
-            print("9")
             post.tag.clear()
-            print("10")
             post.save()
-            print("11")
             postTags= form.cleaned_data['tag']
-            print("12")
             for tag in postTags:
-                print("13")
                 tag_item = Tag.objects.get(tag_item= tag)
-                print("14")
                 post.save()
                 post.tag.add(tag)
             if form2.is_valid():
-                print("15")
                 tagsArray = form2.cleaned_data['tag_item']
-                print("16")
+
                 tags = tagsArray.split(",")
-                print("17")
                 for tag in tags:
-                    print("18")
                     tag_item = Tag.objects.create(tag_item= tag)
-                    print("19")
                     tag_item.save()
                     post.save()
                     post.tag.add(tag_item)
-            print("20")
             post.save()
-            print("21")
             return redirect('posts')
     else:
         form = PostForm()

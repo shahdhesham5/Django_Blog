@@ -19,7 +19,7 @@ urlpatterns = [
     #categories
     path('categories/', views.categories, name='categories'),
     path('add-cat/', views.addCat, name='add-cat'),
-    path('edit-cat/<cat_id>', views.editCat, name='edit-cat'),
+    # path('edit-cat/<cat_id>', views.editCat, name='edit-cat'),
     path('delete-cat/<cat_id>', views.delectCat, name='delete-cat'),
 
     #authentication
