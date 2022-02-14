@@ -39,8 +39,8 @@
                 
                 <div  class="text-center">
                     {% if post.user == request.user or  user.is_superuser %}
-                    <a class="btn btn-info " href="{% url 'deletepost' post.id %}">Delete</a>
-                    <a class="btn btn-info " href="{% url 'updatepost' post.id %}">Update</a>
+                    <a class="btn btn-danger " href="{% url 'deletepost' post.id %}"> <i class='fas fa-trash'></i></a>
+                    <a class="btn btn-primary " href="{% url 'updatepost' post.id %}"><i class='fas fa-pen'></i></a>
                     {% endif %}
 
                 </div>
