@@ -443,7 +443,7 @@ def addpost(request):
                     post.save()
                     post.tag.add(tag_item)
             post.save()
-            return redirect('posts')
+            return redirect('home')
     else:
         form = PostForm()
         form2 = TagForm()
@@ -459,7 +459,7 @@ def addpost(request):
 def deletepost(request, post_id):
     post = Post.objects.get(id=post_id)
     post.delete()
-    return redirect('posts')
+    return redirect('home')
 
 
 #update post
