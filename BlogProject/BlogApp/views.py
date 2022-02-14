@@ -1,9 +1,10 @@
-from this import s
+from multiprocessing import context
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
+from django.test import tag
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
 from BlogApp.models import Category, Post , Comment, Fwords, Tag, Subscribers
-from .forms import CommentForm, CreateUserForm,CategoryForm, FwordsForm,PostForm ,  TagForm#the modified UserCreationForm
+from .forms import CommentForm, CreateUserForm,CategoryForm, FwordsForm,PostForm , TagForm#the modified UserCreationForm
 #authentication
 from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm
 from django.contrib import messages
@@ -272,7 +273,7 @@ def unsubscribe(request, cat_id):
     return redirect ('home')
 
 
-#view category posts
+#enter category
 def enterCat(request, cat_id):
     category = Category.objects.get(id = cat_id)
     category_posts = Post.objects.filter(category_id=cat_id)
@@ -299,31 +300,6 @@ def addCat(request):
         context = {'form': form}
         return render (request, 'BlogApp/addcat.html', context)
 
-#edit category
-@allowed_users(allowed_roles=['admin'])
-def editCat(request,cat_id):
-    #category to be edited
-    category = Category.objects.get(id=cat_id) 
-    #if submited, check the input
-    if request.method == 'POST': 
-        #getting the category the user trying to add
-        input = request.POST.get("category")
-        print(input)
-        try:
-            #if category already exists
-            x = Category.objects.filter(category=input) 
-            print(x)
-            messages.info(request, 'Category already exists')
-            return redirect('edit-cat')
-        except:
-            form = CategoryForm(request.POST, instance=category)
-            if form.is_valid():
-                form.save()
-                return redirect('categories')
-    else:
-        form = CategoryForm(instance=category)
-        context = {'form': form}
-        return render (request, 'BlogApp/editCat.html', context)
 
 #delete category
 @allowed_users(allowed_roles=['admin'])
@@ -331,6 +307,68 @@ def delectCat(request, cat_id):
     category = Category.objects.get(id=cat_id)
     category.delete()
     return redirect('categories')
+
+#edit category
+@allowed_users(allowed_roles=['admin'])
+def editCat(request, cat_id):
+    category =  Category.objects.get(id=cat_id)
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, instance=category)
+        if form.is_valid:
+            form.save()
+            return redirect('categories')
+    else:
+        form = CategoryForm(instance=category)
+        context = {'form': form}
+        return render (request, 'BlogApp/editCat.html', context)
+
+#show tags for admin
+@allowed_users(allowed_roles=['admin'])
+def tags(request):
+    all_tags = Tag.objects.all()
+    context = {'all_tags':all_tags}
+    return render (request,'BlogApp/showtags.html', context)
+
+#addtag
+def addtag(request):
+    if request.method == 'POST':
+        input = request.POST.get("tag_item")
+        try:
+            x = Tag.objects.get(tag_item=input) #if tag already exists
+            messages.info(request, 'Tag already exists')
+            return redirect('addtag')
+        except:
+            form = TagForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('tags')
+    else:
+        form = TagForm()
+        context = {'form':form}
+        return render (request, 'BlogApp/addtag.html', context)
+    
+#delete tag by admin
+@allowed_users(allowed_roles=['admin'])
+def deltag(request,tag_id):
+    tag = Tag.objects.get(id=tag_id)
+    tag.delete()
+    return redirect ('tags')
+
+
+
+#edit tag by admin
+@allowed_users(allowed_roles=['admin'])
+def editTag(request, tag_id):
+    tag = Tag.objects.get(id=tag_id)
+    if request.method == 'POST':
+        form = TagForm(request.POST, instance=tag)
+        if form.is_valid:
+            form.save()
+            return redirect('tags')
+    else:
+        form = TagForm(instance=tag)
+        context = {'form': form}
+        return render (request, 'BlogApp/edit-tag.html', context)
 
 
 #show posts
@@ -384,7 +422,10 @@ def addpost(request):
     else:
         form = PostForm()
         form2 = TagForm()
-        context = {'form': form, 'form2': form2}
+        forbidden_words=list (Fwords.objects.values_list('fword', flat=True))
+        fwords = ','.join(forbidden_words)
+        print( type(forbidden_words))
+        context = {'form': form, 'form2': form2, 'fwords':fwords}
         return render (request, 'BlogApp/addpost.html', context)
 
 

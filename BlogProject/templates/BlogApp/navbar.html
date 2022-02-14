@@ -1,3 +1,33 @@
+<style>
+
+@media only screen and (min-width: 990px) {
+    .logout {
+  position: relative;
+}
+
+.logout .logoutText {
+  visibility: hidden;
+  width: 70px;
+  background-color: rgb(168, 161, 161);
+  color: #fff;
+  text-align: center;
+  border-radius: 3px;
+  padding: 5px 0;
+  
+  /* Position the logout */
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: 50%;
+  margin-left: -40px;
+}
+
+.logout:hover .logoutText {
+  visibility: visible;
+} 
+}
+
+</style>
 <nav class="navbar navbar-expand-lg navbar-light bg-light  fixed-top  justify-content-between">
     <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'home' %}">{% if request.user.is_superuser%} <i
@@ -35,7 +65,9 @@
             <ul class="navbar-nav mr-auto mb-2 mb-lg-0 pb-0">
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'logout' %}">Log out</a>
+                    <a class="nav-link logout" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt" style="font-size: 20;"></i>
+                        <span class="logoutText">Log out</span>
+                    </a>
                 </li>
             </ul>
             {% else %}
@@ -55,7 +87,7 @@
                     <a class="nav-link" aria-current="page" href="{% url 'register' %}">Sign up</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{% url 'login' %}">Login</a>
+                    <a class="nav-link" aria-current="page" href="{% url 'login' %}"> Login <i class='fas fa-user'></i> </a>
                 </li>
 
             </ul>
@@ -63,7 +95,7 @@
         </div>
     </div>
 </nav>
-<a onclick="history.back()" href="#" id="backButton" class="m-4"> << Back</a>
+<a onclick="history.back()" href="#" id="backButton"  class="btn btn-secondary m-2"><i class="fas fa-angle-left"></i> Back</a>
 <script>
     window.onload = (event) => {
         var button = document.getElementById("backButton")
