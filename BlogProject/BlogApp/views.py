@@ -266,6 +266,7 @@ def subscribe(request, cat_id):
     category = Category.objects.get(id = cat_id)
     subscriber = Subscribers.objects.create(category=category,subscriber=request.user)
     email = request.user.email
+    #send email confirming subscription
     send_mail(
     'Subscription Successful!',
     f'Hello {request.user} Thank you for subscribing to {category}, welcome on board',
@@ -323,7 +324,14 @@ def delectCat(request, cat_id):
 @allowed_users(allowed_roles=['admin'])
 def editCat(request, cat_id):
     category =  Category.objects.get(id=cat_id)
+    categories_list = list(Category.objects.values_list('category', flat=True))
     if request.method == 'POST':
+        #check if category already exists
+        input = request.POST.get("category")
+        if input in categories_list:
+            messages.info (request, 'Category already exists')
+            return redirect ('add-cat')
+        #if not found
         form = CategoryForm(request.POST, instance=category)
         if form.is_valid:
             form.save()
