@@ -5,6 +5,7 @@ from django.test import tag
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
 from BlogApp.models import Category, Post , Comment, Fwords, Tag, Subscribers
 from .forms import CommentForm, CreateUserForm,CategoryForm, FwordsForm,PostForm , TagForm#the modified UserCreationForm
+import re 
 #authentication
 from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm
 from django.contrib import messages
@@ -511,7 +512,7 @@ def updatepost(request,post_id):
 
 
 
-#show categories
+#show Forbidden words
 @allowed_users(allowed_roles=['admin'])
 def fwords(request):
     all_fwords = Fwords.objects.all()
@@ -519,7 +520,7 @@ def fwords(request):
     return render (request,'BlogApp/Fwords.html', context)
 
 
-#add Forbbiden Wordss
+#add Forbbiden Words
 @allowed_users(allowed_roles=['admin'])
 def addFword(request):
     if request.method == 'POST': #if submited, check the inputs, validate form, then save
@@ -543,34 +544,22 @@ def addFword(request):
 def editFwords(request, fword_id):
     # grapping the word that want 
     fword= Fwords.objects.get(id=fword_id) 
+    word = list(Fwords.objects.values_list('fword', flat=True))
     if request.method == 'POST':
         form = FwordsForm(request.POST, instance=fword)
-        if form.is_valid():
+        x = request.POST.get('fword')
+        if x in  word :
+            messages.info(request, 'it is already exists')
+            return redirect('add-fword')
+        else:
+            form = FwordsForm(request.POST, instance=fword)
+            form.is_valid()
             form.save()
-        return redirect('Fwords')
-    form = FwordsForm(instance=fword)
-    context = {'form': form}
-    return render(request, 'BlogApp/add-fword.html', context)
-
-
-@allowed_users(allowed_roles=['admin'])
-def addCat(request):
-    if request.method == 'POST': #if submited, check the inputs, validate form, then save
-        input = request.POST.get("category") #getting the category the customer trying to add
-        try:
-            x = Category.objects.get(category=input) #if category already exists
-            messages.info(request, 'Category already exists')
-            return redirect('add-cat')
-        except:
-            form = CategoryForm(request.POST)
-            if form.is_valid():
-                form.save()
-                return redirect('categories')
+            return redirect('Fwords')
     else:
-        form = CategoryForm()
+        form = FwordsForm(instance=fword)
         context = {'form': form}
-        return render (request, 'BlogApp/addcat.html', context)
-
+        return render(request, 'BlogApp/add-fword.html', context)
 
 #forbidden words
 def delFword(request, fword_id):
