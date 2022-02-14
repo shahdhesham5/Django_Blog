@@ -271,7 +271,7 @@ def unsubscribe(request, cat_id):
     return redirect ('home')
 
 
-#enter category
+#view category posts
 def enterCat(request, cat_id):
     category = Category.objects.get(id = cat_id)
     category_posts = Post.objects.filter(category_id=cat_id)
@@ -298,6 +298,31 @@ def addCat(request):
         context = {'form': form}
         return render (request, 'BlogApp/addcat.html', context)
 
+#edit category
+@allowed_users(allowed_roles=['admin'])
+def editCat(request,cat_id):
+    #category to be edited
+    category = Category.objects.get(id=cat_id) 
+    #if submited, check the input
+    if request.method == 'POST': 
+        #getting the category the user trying to add
+        input = request.POST.get("category")
+        print(input)
+        try:
+            #if category already exists
+            x = Category.objects.filter(category=input) 
+            print(x)
+            messages.info(request, 'Category already exists')
+            return redirect('edit-cat')
+        except:
+            form = CategoryForm(request.POST, instance=category)
+            if form.is_valid():
+                form.save()
+                return redirect('categories')
+    else:
+        form = CategoryForm(instance=category)
+        context = {'form': form}
+        return render (request, 'BlogApp/editCat.html', context)
 
 #delete category
 @allowed_users(allowed_roles=['admin'])

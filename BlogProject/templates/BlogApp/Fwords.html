@@ -10,23 +10,20 @@
 {% endblock %}
 
 {% block main %}
+
+
+<a href="{% url 'add-fword' %}" > <button type="button" class="btn btn-secondary mb-2">Forbidden Word <b>+</b></button> </a>
 <div class="col-5">
-    <table border="1" class="table">
+    <table class="table table-hover" style="font-weight: bold;">
+        {% for fword in all_fwords %}
         <tr>
-            <th class="col-2">Forbidden Words</th>
-            <th class="col-1" >actions</th>
-            {% for fword in all_fwords %}
-        <tr>
-            <td>{{fword.fword}}</td>
-            <td><a href="{% url 'del-Fword' fword.id %}">delete</a></td>
-
+            <th>{{fword.fword}}</th>
+            <td><a href="{% url 'del-Fword' fword.id %}" style="color: #d63031;">Delete</a></td>
+            <td><a href="#" style=" color: #2980b9;">Edit</a></td>
         </tr>
-             {% endfor %}
-        </tr>
+        {% endfor %}
+        
     </table>
-    <a href="{% url 'add-fword' %}"> add Forbidden Word </a>
-
 </div>
-
 
 {% endblock %}

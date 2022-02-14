@@ -16,11 +16,12 @@ urlpatterns = [
     path('enter-category/<cat_id>', views.enterCat, name='enter-category'),
     path('subscribe/<cat_id>/', views.subscribe, name='subscribe'),
     path('unsubscribe/<cat_id>/', views.unsubscribe, name='unsubscribe'),
-    #crud on categories
+    #categories
     path('categories/', views.categories, name='categories'),
     path('add-cat/', views.addCat, name='add-cat'),
+    path('edit-cat/<cat_id>', views.editCat, name='edit-cat'),
     path('delete-cat/<cat_id>', views.delectCat, name='delete-cat'),
-    path('subscribe/<cat_id>', views.subscribe, name='subscribe'),
+
     #authentication
     path('register/', views.register, name='register'),
     path('login/', views.loginPage, name='login'),
