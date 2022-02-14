@@ -42,7 +42,7 @@
 
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item ">
-                    <a class="nav-link" href="{% url 'posts' %}">Posts <i class='far fa-address-card'></i></a>
+                    <a class="nav-link" href="{% url 'yourposts' user.id %}">My posts <i class='far fa-address-card'></i></a>
                 </li>
                 {% if request.user.is_superuser %}
                 <li class="nav-item">
@@ -73,7 +73,7 @@
             {% else %}
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'posts' %}">Posts <i class='far fa-address-card'></i></a>
+                 <!-- posts -->
                 </li>
             </ul>
             <form class="d-flex" style="margin-top: 3px; margin-bottom: 3px;" action="{% url 'search' %}" method="POST">

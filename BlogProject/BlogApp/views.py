@@ -389,12 +389,18 @@ def editTag(request, tag_id):
         return render (request, 'BlogApp/edit-tag.html', context)
 
 
-#show posts
+# show posts
 def posts(request):
     all_posts = Post.objects.all()
     context = {'all_posts':all_posts}
     return render (request,'BlogApp/posts.html', context)
 
+#show the user their posts only
+@login_required(login_url='login')
+def yourPosts(request, user_id):
+    user_posts = Post.objects.filter(user_id=request.user.id)
+    context = {'user_posts':user_posts}
+    return render (request,'BlogApp/showposts.html', context)
 
 #addpost
 @login_required(login_url='login')
