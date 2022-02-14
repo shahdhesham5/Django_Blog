@@ -473,6 +473,20 @@ def addFword(request):
         context = {'form': form}
         return render (request, 'BlogApp/add-fword.html', context)
 
+#edit Forbidden Words 
+@allowed_users(allowed_roles=['admin'])
+def editFwords(request, fword_id):
+    # grapping the word that want 
+    fword= Fwords.objects.get(id=fword_id) 
+    if request.method == 'POST':
+        form = FwordsForm(request.POST, instance=fword)
+        if form.is_valid():
+            form.save()
+        return redirect('Fwords')
+    form = FwordsForm(instance=fword)
+    context = {'form': form}
+    return render(request, 'BlogApp/add-fword.html', context)
+
 
 @allowed_users(allowed_roles=['admin'])
 def addCat(request):

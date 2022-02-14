@@ -37,6 +37,7 @@ urlpatterns = [
     path('Fwords/', views.fwords, name='Fwords'),
     path('add-Fwords/', views.addFword, name='add-fword'),
     path('del-Fword/<fword_id>', views.delFword, name='del-Fword'),
+    path('edit-Fwords/<fword_id>',views.editFwords,name='edit-Fwords'),
     #search for tags and post titles 
     path('search/', views.search, name='search'),
 
