@@ -47,7 +47,10 @@ class Comment(models.Model):
     likes = models.ManyToManyField(User , related_name='comment_like')
     dislikes = models.ManyToManyField(User , related_name='comment_dislike')
     parent = models.ForeignKey('self',on_delete=models.CASCADE,blank=True, null=True, related_name='+')
-
+    
+    class Meta:
+        ordering = ('-created_on',)
+    
     @property
     def children(self):
         return Comment.objects.filter(parent=self).order_by('-created_on').all()
