@@ -66,16 +66,16 @@
         <!-- like Form if the user need to add a like-->
         <form method="POST" action="{% url 'likepost' post.id %}">
             {% csrf_token %}
-            {% if  is_like %}
+            {% if is_like %}
             <button type="submit" name="post_id" value="{{ post.id }}"
                 style="background-color: transparent; border: none; box-shadow: none;">
                 <i class="fas fa-thumbs-up post" style="color: blue; font-size:x-large;"></i>
-                <span>{{ totallikes}}</span>
+                <span>{{ post.likes.count }}</span>
             </button>
             {% else %}
             <button type="submit" name="post_id" value="{{ post.id }}"
                 style="background-color: transparent; border: none; box-shadow: none;">
-                <i class="fas fa-thumbs-up"></i> <span>{{ totallikes }}</span>
+                <i class="fas fa-thumbs-up"></i> <span>{{ post.likes.count }}</span>
             </button>
             {% endif %}
         </form>
@@ -86,12 +86,12 @@
             <button type="submit" name="post_id" value="{{ post.id }}"
                 style="background-color: transparent; border: none; box-shadow: none;">
                 <i class="fas fa-thumbs-down" style="color:brown; font-size:x-large;"></i>
-                <span>{{ totaldislikes }}</span>
+                <span>{{ post.dislikes.count }}</span>
             </button>
             {% else %}
             <button type="submit" name="post_id" value="{{ post.id }}"
                 style="background-color: transparent; border: none; box-shadow: none;">
-                <i class="fas fa-thumbs-down"></i> <span>{{ totaldislikes }}</span>
+                <i class="fas fa-thumbs-down"></i> <span>{{ post.dislikes.count }}</span>
             </button>
             {% endif %}
         </form>
@@ -132,47 +132,8 @@
                 <h5 class="card-title">{{comment.user}}</h5>
                 <small class="card-title">{{comment.created_on}}</small>
                 <p class="card-text">{{comment.comment_info}}</p>
-                <!-- start -->
-                <div class="d-flex flex-row" style="align-items: baseline">
-                    <!-- like Form if the user need to add a like to a comment-->
-                    <form method="POST" action="{% url 'like-comment' post_id=post.id comment_id=comment.id %}">
-                        {% csrf_token %}
-                        {% if is_like %}
-                        <button type="submit" name="comment_id" value="{{ comment_id }}"
-                            style="background-color: transparent; border: none; box-shadow: none;">
-                            <i  class="fas fa-thumbs-up comment" style="color: blue;"></i>
-                            <span>{{ comment.likes.all.count}}</span>
-                        </button>
-                        {% else %}
-                        <button type="submit" name="comment_id" value="{{ comment_id }}"
-                            style="background-color: transparent; border: none; box-shadow: none;">
-                            <i class="fas fa-thumbs-up"></i>
-                            <span>{{ comment.likes.all.count }}</span>
-                        </button>
-                        {% endif %}
-                    </form>
-
-
-                    <!-- dislike Form if the user need to add a dislike to a comment-->
-                    <form method="POST" action="{% url 'dislike-comment' post_id=post.id comment_id=comment.id %}">
-                        {% csrf_token %}
-                        {% if is_dislike %}
-                        <button type="submit" name="comment_id" value="{{ comment_id }}"
-                            style="background-color: transparent; border: none; box-shadow: none;">
-                            <i class="fas fa-thumbs-down" style="color:brown;"></i>
-                            <span>{{ comment.dislikes.all.count}}</span>
-                        </button>
-                        {% else %}
-                        <button type="submit" name="comment_id" value="{{ comment_id }}"
-                            style="background-color: transparent; border: none; box-shadow: none;">
-                            <i class="fas fa-thumbs-down"></i>
-                            <span>{{ comment.dislikes.all.count }}</span>
-                            {% endif %}
-                    </form>
-
 
                     <!-- reply to comment button -->
-
                     <button style="background-color: transparent; border: none; box-shadow: none;">
                         <i class="far fa-comment-dots font-size:x-large;"
                             onclick="commentReply('{{ comment.id }}')"></i>
@@ -214,12 +175,6 @@
         There are no comments for this post, be the first to comment!
     </div>
     {% endif %}
-
-
-
-
-
-
 </div>
 
 
