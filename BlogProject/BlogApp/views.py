@@ -6,7 +6,7 @@ from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
 from BlogApp.models import Category, Post , Comment, Fwords, Tag, Subscribers
 from .forms import CommentForm, CreateUserForm,CategoryForm, FwordsForm,PostForm , TagForm#the modified UserCreationForm
 import re 
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 #authentication
 from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm
 from django.contrib import messages
@@ -141,8 +141,15 @@ def home(request):
     all_categories = Category.objects.all()
     all_posts = Post.objects.all()
     paginator = Paginator(all_posts, 4)
-    page_number = request.GET.get('page')
-    page = paginator.get_page(page_number)
+    page_number = request.GET.get('page',1)
+    try:
+        page = paginator.page(page_number)
+    except PageNotAnInteger:
+        # if page is not an integer, deliver the first page
+        page = paginator.page(1)
+    except EmptyPage:
+        # if the page is out of range, deliver the last page
+        page = paginator.page(paginator.num_pages)
     context = {
         'page':page,
         'page_number':page_number}

@@ -72,27 +72,27 @@
                       </div>
                     </div>
                   </div>
+                  
             {% endfor %}
+            
             </div>
         </div>
+
     </div>
     <!--Pagination-->
-    <div class="container p-4">
-      <div class="pagination justify-content-center">
-          <span class="step-links">
-            {% if page.has_previous %}
-                <a href="{% url 'home' %}?page={{ page.previous_page_number}}"> previous</a>
-            {% endif %}
-
-              <span class="current">
-                Page {{ page.number }} of {{ page.paginator.num_pages }}
-              </span>
-            {% if page.has_next %}
-                <a href="{% url  'home' %}?page={{ page.next_page_number}}"> next </a>
-            {% endif %}
+<div class="container ">
+  <div class="pagination justify-content-center">
+      <span class="step-links">
+            <a href="{% url 'home' %}?page={{ page.previous_page_number}}"> previous</a>
+          <span class="current">
+            Page {{ page.number }} of {{ page.paginator.num_pages }}
           </span>
-          </div>
+            <a class =" btn-primary" href="{% url  'home' %}?page={{ page.next_page_number}}"> next </a>
+      </span>
       </div>
-      <!--end of Pagination-->
+  </div>
+  <!--end of Pagination-->
+    
+    
 {% endblock %}
 
