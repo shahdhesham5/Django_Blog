@@ -24,6 +24,16 @@
                 {% endif %}
             </div>
             <hr>
+            <div style="width: 40%; display: flex; justify-content: center;
+            flex-direction: column;" id="imgDiv">
+                <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                    <img src="{{ MEDIA_URL }}/{{post.post_img}}" id="img" class="img-fluid" style="width: 100%;" />
+                    <a href="#!">
+                        <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                    </a>
+                </div>
+            </div>
+
             <div class="Post" id="Post"
                 style="display: flex; justify-content: space-between; width: 100%; padding: 0 2% ;">
                 <div style="width:55%; text-align: justify;" id="content">
@@ -31,22 +41,14 @@
                     <small class="card-text" style="float: right; clear: right;">{{post.created_on}}</small>
 
                 </div>
-                <div style="width: 40%; display: flex; justify-content: center;
-                flex-direction: column;" id="imgDiv">
-                    <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
-                        <img src="{{ MEDIA_URL }}/{{post.post_img}}" id="img" class="img-fluid" style="width: 100%;" />
-                        <a href="#!">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
-                        </a>
-                    </div>
-                </div>
+               
 
 
             </div>
 
 
             <div class="card-body">
-                <h4 class="card-text">{{post.caregory}}</h4>
+                <h4 class="card-text">{{post.category}}</h4>
                 <dv class="tag-container">
                     {% for tag in tags %}
                     <h4>
@@ -65,7 +67,6 @@
     {% if comments %}
     <h6>Comments {{comments.count }}</h6>
     {% for comment in comments %}
-       
         <div class="col-12 ">
             <div class="card">
                 <div class="card-body">
@@ -139,7 +140,6 @@
                          </div>
                     </div>
                 </div>
-
                 {% endfor %}
           
         {% endfor %}
