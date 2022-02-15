@@ -321,6 +321,8 @@ def deletecomment(request,post_id, comment_id):
     comment.delete()
     return redirect('post',post_id=post_id)
 
+
+
 #manageblog
 @login_required(login_url='login')
 @admin_only
@@ -375,6 +377,7 @@ def tag(request, tag_id):
     return render (request, 'BlogApp/posts.html', context)
 
 #add category
+@login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def addCat(request):
     if request.method == 'POST': #if submited, check the inputs, validate form, then save
@@ -395,6 +398,7 @@ def addCat(request):
 
 
 #delete category
+@login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def delectCat(request, cat_id):
     category = Category.objects.get(id=cat_id)
@@ -402,6 +406,7 @@ def delectCat(request, cat_id):
     return redirect('categories')
 
 #edit category
+@login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def editCat(request, cat_id):
     category =  Category.objects.get(id=cat_id)
@@ -423,6 +428,7 @@ def editCat(request, cat_id):
         return render (request, 'BlogApp/editCat.html', context)
 
 #show tags for admin
+@login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def tags(request):
     all_tags = Tag.objects.all()
@@ -430,6 +436,8 @@ def tags(request):
     return render (request,'BlogApp/showtags.html', context)
 
 #addtag
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
 def addtag(request):
     if request.method == 'POST':
         input = request.POST.get("tag_item")
@@ -448,6 +456,7 @@ def addtag(request):
         return render (request, 'BlogApp/addtag.html', context)
     
 #delete tag by admin
+@login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def deltag(request,tag_id):
     tag = Tag.objects.get(id=tag_id)
@@ -457,6 +466,7 @@ def deltag(request,tag_id):
 
 
 #edit tag by admin
+@login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def editTag(request, tag_id):
     tag = Tag.objects.get(id=tag_id)
@@ -594,6 +604,7 @@ def updatepost(request,post_id):
 
 
 #show Forbidden words
+@login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def fwords(request):
     all_fwords = Fwords.objects.all()
@@ -602,6 +613,7 @@ def fwords(request):
 
 
 #add Forbbiden Words
+@login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def addFword(request):
     if request.method == 'POST': #if submited, check the inputs, validate form, then save
@@ -621,6 +633,7 @@ def addFword(request):
         return render (request, 'BlogApp/add-fword.html', context)
 
 #edit Forbidden Words 
+@login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def editFwords(request, fword_id):
     # grapping the word that want 
@@ -643,6 +656,8 @@ def editFwords(request, fword_id):
         return render(request, 'BlogApp/add-fword.html', context)
 
 #forbidden words
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
 def delFword(request, fword_id):
     fword = Fwords.objects.get(id=fword_id)
     fword.delete()

@@ -72,5 +72,3 @@ class Subscribers(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     
 
-class Messages(models.Model):
-    pass
