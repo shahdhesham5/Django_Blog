@@ -1,0 +1,12 @@
+.tag-container {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.tag {
+    pointer-events: none;
+    background-color: #242424;
+    color: white;
+    padding: 6px;
+    margin: 5px;
+}

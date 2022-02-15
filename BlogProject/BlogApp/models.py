@@ -49,7 +49,29 @@ class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment_info = models.CharField(max_length=250)
     created_on = models.DateTimeField(default=timezone.now)
+    likes = models.ManyToManyField(User , related_name='comment_like')
+    dislikes = models.ManyToManyField(User , related_name='comment_dislike')
+    parent = models.ForeignKey('self',on_delete=models.CASCADE,blank=True, null=True, related_name='+')
+    
+    class Meta:
+        ordering = ('-created_on',)
+    
+    @property
+    def children(self):
+        return Comment.objects.filter(parent=self).order_by('-created_on').all()
 
+    @property
+    def is_parent(self):
+        if self.parent is None:
+            return True
+        return False
+        
+    def total_likes(self):
+        return self.likes.count()
+        
+    def total_dislikes(self):
+        return self.dislikes.count()
+    
     def __str__(self):
         return self.comment_info
 
