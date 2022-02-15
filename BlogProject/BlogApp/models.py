@@ -49,11 +49,11 @@ class Comment(models.Model):
     parent = models.ForeignKey('self',on_delete=models.CASCADE,blank=True, null=True, related_name='+')
     
     class Meta:
-        ordering = ('-created_on',)
+        ordering = ('created_on',)
     
     @property
     def children(self):
-        return Comment.objects.filter(parent=self).order_by('-created_on').all()
+        return Comment.objects.filter(parent=self).order_by('created_on').all()
 
     @property
     def is_parent(self):
