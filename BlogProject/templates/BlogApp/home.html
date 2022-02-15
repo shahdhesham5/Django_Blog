@@ -1,79 +1,128 @@
-
 {% extends 'BlogApp/main.html' %}
 {% load static %}
 
 {% block head %}
-    <title>Home</title>
+<title>Home</title>
+<link rel="stylesheet" href="{% static 'css/tag.css' %}">
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
 {% endblock %}
 
 {% block navbar %}
-    {% include 'BlogApp/navbar.html' %}
+{% include 'BlogApp/navbar.html' %}
 {% endblock %}
 
 {% block main %}
-
-
- 
 <!-- "col-md-4 col-sm-12 mr-2" -->
-    <div class="row mt-3">
-        <div class="col-3 col-md-5 col-lg-3 col-sm-5">
-            <h3 class="mt-5 fs-2"><b>Categories</b> </h3>
-                <table class="table" style="font-size: larger;"> 
-                {% for category in all_categories %}
-                <tr class="col-9 col-md-11">
-                    <td style="padding-top: 17;"><a href="{% url 'enter-category' category.id %}" style="text-decoration: none;" ><b>{{category.category}}</b> </a> </td>
-                    {% if not request.user.is_anonymous %}
-                            {% if category.id in all_subscribers %}
-                            <td><button type="button" class="btn btn-danger " style="font-size: small;"><a href="{% url 'unsubscribe' category.id %}" style="text-decoration: none; color:white;">Unsubscribe</a></button></td>
-                            {% else %}
-                            <td><button type="button" class="btn btn-primary " style="font-size: small;"><a href="{% url 'subscribe' category.id %}" style="text-decoration: none; color:white;">Subscribe</a></button></td>
-                            {% endif %}
-                    {% else %}
-                         <td style="padding-top: 18;" class="text-center"><a href="{% url 'login' %}" style="text-decoration: none; font-size: smaller;">login to subscribe</a></td>
-                    {% endif %}
-                </tr>
-                {% endfor %}
-                </table>
-        </div>
-        <div class="col-8 col-md-8">
-            <div class="row"> {% for post in all_posts %}
-       
-                <div class="col-md-5 col-lg-5 col-sm-12 ">
-                    <div class="card mb-4" style="background: rgba(233, 233, 233, 0.322); ">
-                      
-                      <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
-                        <a href="{% url 'post' post.id %}">
-                            <img src=" {{MEDIA_URL}}/{{post.post_img}}" class="img-fluid" style="width:  100%;
+<div class="row mt-3">
+  <div class="col-3 col-md-5 col-lg-3 col-sm-5">
+    <h3 class="mt-5 fs-2"><b>Categories</b> </h3>
+    <table class="table" style="font-size: larger;">
+      {% for category in all_categories %}
+      <tr class="col-9 col-md-11">
+        <td style="padding-top: 17;"><a href="{% url 'enter-category' category.id %}"
+            style="text-decoration: none;"><b>{{category.category}}</b> </a> </td>
+        {% if not request.user.is_anonymous %}
+        {% if category.id in all_subscribers %}
+        <td><button type="button" class="btn btn-danger " style="font-size: small;"><a
+              href="{% url 'unsubscribe' category.id %}"
+              style="text-decoration: none; color:white;">Unsubscribe</a></button></td>
+        {% else %}
+        <td><button type="button" class="btn btn-primary " style="font-size: small;"><a
+              href="{% url 'subscribe' category.id %}"
+              style="text-decoration: none; color:white;">Subscribe</a></button></td>
+        {% endif %}
+        {% else %}
+        <td style="padding-top: 18;" class="text-center"><a href="{% url 'login' %}"
+            style="text-decoration: none; font-size: smaller;">login to subscribe</a></td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </table>
+    <div>
+      <h4>Tags</h4>
+      <dv class="tag-container" style="display: flex;">
+        {% for tag in tags %}
+        <h5>
+          <span class="badge bg-secondary mx-1">
+            <i class="fas fa-tags"></i>
+            <a href="{% url 'tag' tag.id %}"  style="color: #fff;">
+              {{tag}} 
+            </a>
+            </span>
+        </h5>
+        {% endfor %}
+      </dv>
+    </div>
+  </div>
+  <div class="col-8 col-md-8">
+    <div class="row"> {% for post in page_obj %}
+
+      <div class="col-6 ">
+        <div class="card mb-4" style="background: rgba(233, 233, 233, 0.322); ">
+
+          <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+            <a href="{% url 'post' post.id %}">
+              <img src=" {{MEDIA_URL}}/{{post.post_img}}" class="img-fluid" style="width:  100%;
                             height: 200px;
-                            background-size: cover;"/> </a>
-                        <a href="#!">
-                          <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
-                        </a>
-                      </div>
-                      <h4 class="card-title m-1" >{{post.title}}</h4>
-                      <span><small class="card-title m-1">{{post.created_on}}</small></span>
-                        <p class="card-text m-2" style="white-space: nowrap;
+                            background-size: cover;" /> </a>
+            <a href="#!">
+              <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+            </a>
+          </div>
+          <h4 class="card-title m-1">{{post.title}}</h4>
+          <dv class="tag-container">
+            {% for tag in post.tag.all %}
+            <h5>
+                <span class="badge bg-secondary mx-1"><i class="fas fa-tags"></i>{{tag}}</span>
+            </h5>
+            {% endfor %}
+        </dv>
+          <span><small class="card-title m-1">{{post.created_on}}</small></span>
+          <p class="card-text m-2" style="white-space: nowrap;
                         overflow: hidden;
                         text-overflow: ellipsis;  ">
-                          {{post.content}}
-                        </p>
-                      
-                      <div class="card-body">
-                        
-                        <div  class="text-center">
-                            {% if post.user == request.user or  user.is_superuser %}
-                            <a class="btn btn-danger " href="{% url 'deletepost' post.id %}"> <i class='fas fa-trash'></i></a>
-                            <a class="btn btn-primary " href="{% url 'updatepost' post.id %}"><i class='fas fa-pen'></i></a>
-                            {% endif %}
-        
-                        </div>
-                        
-                      </div>
-                    </div>
-                  </div>
-            {% endfor %}
-            </div>
-        </div>
-    </div>
-{% endblock %}
+            {{post.content}}
+          </p>
 
+          <div class="card-body">
+            <div class="text-center">
+              {% if post.user == request.user or user.is_superuser %}
+              <a class="btn btn-danger " href="{% url 'deletepost' post.id %}"> <i class='fas fa-trash'></i></a>
+              <a class="btn btn-primary " href="{% url 'updatepost' post.id %}"><i class='fas fa-pen'></i></a>
+              {% endif %}
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+<nav aria-label="..." class="d-flex justify-content-center fixed-bottom">
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page=1">&laquo; First</a>
+    </li>
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&lsaquo; Previous</a>
+    </li>
+    {% endif %}
+    <li class="page-item active" aria-current="page">
+      <a class="page-link" href="#">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+      </a>
+    </li>
+    {% if page_obj.has_next %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next &rsaquo;</a>
+    </li>
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+{% endblock %}

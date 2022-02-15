@@ -1,0 +1,20 @@
+.pagination a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+
+    background-color: #EEEEEE;
+  }
+
+  .active .page-link {
+    color: black !important;
+    border: #BCBBBF solid 1px !important;
+    background: #BCBBBF !important;
+  }
+
+  .pagination a:hover:not(.active) {
+    background-color: #ddd;
+    color: black;
+    height: 100%;
+  }

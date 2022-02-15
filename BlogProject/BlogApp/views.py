@@ -5,7 +5,7 @@ from django.test import tag
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
 from BlogApp.models import Category, Post , Comment, Fwords, Tag, Subscribers
 from .forms import CommentForm, CreateUserForm,CategoryForm, FwordsForm,PostForm , TagForm#the modified UserCreationForm
-import re 
+from django.core.paginator import Paginator
 #authentication
 from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm
 from django.contrib import messages
@@ -135,12 +135,17 @@ def unblockUser(request, user_id):
 #home
 def home(request):
     all_categories = Category.objects.all()
+    tags = Tag.objects.all()
     all_posts = Post.objects.all()
+    # paginator for pagination
+    paginator = Paginator(all_posts,6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     if not request.user.is_anonymous:
         all_subscribers = Subscribers.objects.filter(subscriber=request.user).values_list('category_id', flat=True)
-        context = {'all_categories':all_categories, 'all_subscribers':all_subscribers,'all_posts':all_posts}
+        context = {'all_categories':all_categories, 'all_subscribers':all_subscribers,'tags':tags, 'page_obj':page_obj}
     else:
-        context = {'all_categories':all_categories,'all_posts':all_posts}
+        context = {'all_categories':all_categories,'tags':tags, 'page_obj':page_obj }
     return render(request, 'BlogApp/home.html',context)
 
 
@@ -292,6 +297,12 @@ def enterCat(request, cat_id):
     context ={'category': category, 'category_posts':category_posts}
     return render (request, 'BlogApp/enterCategory.html', context)
 
+
+def tag(request, tag_id):
+    tag_name = Tag.objects.get(id = tag_id)
+    posts = Post.objects.filter(tag=tag_id).all()
+    context ={'all_posts':posts, 'tag': tag_name}
+    return render (request, 'BlogApp/posts.html', context)
 
 #add category
 @allowed_users(allowed_roles=['admin'])

@@ -13,6 +13,8 @@ urlpatterns = [
     path('likepost/<post_id>', views.likepost, name='likepost'),
     path('dislikepost/<post_id>', views.dislikepost, name='dislikepost'),
     path('yourposts/<user_id>', views.yourPosts, name='yourposts'),
+    #show tag posts
+    path('tag/<tag_id>', views.tag, name='tag'),
     #show category posts
     path('enter-category/<cat_id>', views.enterCat, name='enter-category'),
     path('subscribe/<cat_id>/', views.subscribe, name='subscribe'),
