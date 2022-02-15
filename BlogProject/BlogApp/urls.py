@@ -12,6 +12,9 @@ urlpatterns = [
     path('updatepost/<post_id>', views.updatepost, name='updatepost'),
     path('likepost/<post_id>', views.likepost, name='likepost'),
     path('dislikepost/<post_id>', views.dislikepost, name='dislikepost'),
+    path('likecomment/<post_id>/<comment_id>', views.likecomment, name='like-comment'),
+    path('dislikecomment/<post_id>/<comment_id>', views.dislikecomment, name='dislike-comment'),
+    path('commentreply/<post_id>/<comment_id>', views.commentreply, name='commentreply'),
     #show category posts
     path('enter-category/<cat_id>', views.enterCat, name='enter-category'),
     path('subscribe/<cat_id>/', views.subscribe, name='subscribe'),

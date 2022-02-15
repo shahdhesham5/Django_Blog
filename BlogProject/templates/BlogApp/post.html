@@ -77,23 +77,85 @@
     {% if comments %}
     <h6>Comments {{comments.count }}</h6>
     {% for comment in comments %}
-    <div class="col-12 ">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">{{comment.user}}</h5>
-                <small class="card-title">{{comment.created_on}}<small>
-                        <p class="card-text">{{comment.comment_info}}</p>
-                        <!-- if the comment is written by user or the user is admin -->
-                        <!-- he/she can delete this comment-->
-                        {% if comment.user == request.user or user.is_superuser %}
-                        <a type="button" class="btn-close"
-                            href="{% url 'delete-comment' post_id=post.id comment_id=comment.id %}"
-                            aria-label="Close"></a>
-                        {% endif %}
+       
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{comment.user}}</h5>
+                    <small class="card-title">{{comment.created_on}}<small>
+                            <p class="card-text">{{comment.comment_info}}</p>
+                    <!-- start -->
+                    <div class="d-flex flex-row">
+                        <!-- like Form if the user need to add a like to a comment-->
+                        <form method="POST" action="{% url 'like-comment' post_id=post.id comment_id=comment.id %}">
+                            {% csrf_token %}
+                            {% if is_like %}
+                            <button type="submit" name="comment_id" value="{{ comment_id }}"  style="background-color: transparent; border: none; box-shadow: none;">
+                                <i class="fas fa-thumbs-up" style="color: blue;"></i> <span>{{ comment.likes.all.count }}</span>
+                            </button>
+                            {% else %}
+                            <button type="submit" name="comment_id" value="{{ comment_id }}"  style="background-color: transparent; border: none; box-shadow: none;">
+                                <i class="fas fa-thumbs-up"></i> <span>{{ comment.likes.all.count }}</span>
+                            </button>
+                            {% endif %}
+                        </form>
+                        <!-- dislike Form if the user need to add a dislike to a comment-->
+                        <form method="POST" action="{% url 'dislike-comment' post_id=post.id comment_id=comment.id %}">
+                            {% csrf_token %}
+                            {% if is_dislike %}
+                            <button type="submit" name="comment_id" value="{{ comment_id }}"  style="background-color: transparent; border: none; box-shadow: none;">
+                                <i class="fas fa-thumbs-down" style="color:brown;" ></i> <span>{{ comment.dislikes.all.count }}</span>
+                            </button>
+                            {% else %}
+                            <button type="submit" name="comment_id" value="{{ comment_id }}"  style="background-color: transparent; border: none; box-shadow: none;">
+                                <i class="fas fa-thumbs-down"></i> <span>{{ comment.dislikes.all.count }}</span>
+                            {% endif %}
+                        </form>
+                        <!-- reply to comment button -->
+                        <div>
+                            <button style="background-color: transparent; border: none; box-shadow: none;"> 
+                                <i class="far fa-comment-dots font-size:x-large;" onclick="commentReply('{{ comment.id }}')"></i>
+                            </button>
+                        </div>
+                        <!-- reply to Comment Form if the user need to add a comment-->
+                        <div class="d-none" id="{{ comment.id }}" >
+                        <form method="POST" enctype="multipart/form-data" action="{% url 'commentreply' post.id comment.id %}"> {% csrf_token %}
+                            {{ form.as_p }}
+                            <button type="submit" class="btn btn-primary">submit</button>
+                            <button type="reset" class="btn btn-danger">cancel</button>
+                        </form>
+                        </div>
+                    </div>
+                    <!-- end -->
+                    <!-- if the comment is written by user or the user is admin -->
+                            <!-- he/she can delete this comment-->
+                            {% if comment.user == request.user or user.is_superuser %}
+                            <a type="button"
+                                href="{% url 'delete-comment' post_id=post.id comment_id=comment.id %}">
+                                <i class="fas fa-trash"></i></a>
+                            {% endif %}
+                </div>
             </div>
-        </div>
+                {% for child_comment in Comment.children %}
+                <div class="row justify-content-center mt-3 mb-5 child_comment">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{child_comment.user}}</h5>
+                            <small class="card-title">{{child_comment.created_on}}<small>
+                                    <p class="card-text">{{child_comment.comment_info}}</p>
+                                <div>
+                                    {% if request.user == child_comment.user %}
+                                    <a  href="{% url 'delete-comment' post_id=post.id child_comment_id=comment.id %}"><i class="fas fa-trash"></i></a>
+                                    {% endif %}
+                                </div>
+                         </div>
+                    </div>
+                </div>
+
+                {% endfor %}
+          
         {% endfor %}
-        {% else %}
+    {% else %}
         <div class="alert alert-danger">
             There are no comments for this post, be the first to comment!
         </div>
@@ -109,6 +171,7 @@
     {% if not request.user.is_anonymous %}
     <!-- Add Comment button -->
     <button class="btn btn-primary col-2 " id="button" onclick="addComment()">Add Comment <i class='fas fa-pen-square'></i></button> 
+    <!-- <button class="btn btn-primary col-2 " id="button" onclick="addComment()">Add Comment <i class='fas fa-pen-square'></i></button>  -->
     <div class="d-flex flex-row">
         <!-- like Form if the user need to add a like-->
         <form method="POST" action="{% url 'likepost' post.id %}">
@@ -171,6 +234,15 @@
         post.style.flexDirection = "column"
         content.style.width = "100%"
         imgDiv.style.width = "100%"
+    }
+
+    function commentReply(parent_id){
+        const row = document.getElementById(parent_id);
+        if (row.classList.contains('d-none')){
+            row.classList.remove('d-none');
+        }else{
+            row.classList.add('d-none');
+        }
     }
 </script>
 <!-- end Script-->

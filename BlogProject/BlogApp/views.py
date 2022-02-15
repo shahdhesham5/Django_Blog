@@ -147,7 +147,8 @@ def home(request):
 #Post details
 def post(request,post_id):
     post = Post.objects.get(id = post_id)
-    #geting total likes
+    # comment = Comment.objects.get(id=comment_id)
+    #geting total likes and dislikes for posts
     totallikes = post.total_likes()
     totaldislikes = post.total_dislikes()
     is_like = False
@@ -238,12 +239,81 @@ def dislikepost(request, post_id):
 
     return redirect('post',post_id=post_id)
 
-# delet comment from spcefic post
+# Comment likes
+@login_required(login_url='login')
+def likecomment(request,post_id,comment_id):
+    comment = Comment.objects.get(id=comment_id)
+
+    is_dislike = False   #checks whether user disliked this comment or not
+    for dislike in comment.dislikes.all():
+        if dislike == request.user:  #if user is already disliked this comment
+            is_dislike = True
+            break
+    if is_dislike:   #if user is already disliked this post, will undo it 
+            comment.dislikes.remove(request.user)
+         
+    is_like = False
+    for like in comment.likes.all():
+        if like == request.user:  #if user has already likes this comment
+            is_like = True
+            break
+    if not is_like:
+        comment.likes.add(request.user) #if user didn't like comment yet, will add like
+    
+    if is_like:
+        comment.likes.remove(request.user) #if user has already likes this comment, will undo it
+    return redirect('post',post_id=post_id)
+
+# Comments dislikes
+@login_required(login_url='login')
+def dislikecomment(request,post_id,comment_id):
+    comment = Comment.objects.get(id=comment_id)
+    
+    is_like = False
+    for like in comment.likes.all():
+        if like == request.user:
+            is_like = True
+            break
+    if is_like:
+            comment.likes.remove(request.user)
+            
+    is_dislike = False
+    for dislike in comment.dislikes.all():
+        if dislike == request.user:
+            is_dislike = True
+            break
+    if not is_dislike:
+        comment.dislikes.add(request.user)
+    
+    if is_dislike:
+        comment.dislikes.remove(request.user)
+
+    dislikesnum = comment.total_dislikes()
+    if dislikesnum >= 10:
+        comment.delete()
+
+    return redirect('post',post_id=post_id)
+
+#Reply to comments
+@login_required(login_url='login')
+def commentreply(request,post_id, comment_id):
+    post = Post.objects.get(id=post_id)
+    parent_comment = Comment.objects.get(id = comment_id)
+    form = CommentForm(request.POST)
+    if form.is_valid():
+        new_comment = form.save(commit=False)
+        new_comment.user = request.user
+        new_comment.post = post
+        new_comment.parent = parent_comment
+        new_comment.save()
+    return redirect('post',post_id=post_id)
+
+# delete comment from spcefic post
 @login_required(login_url='login')
 def deletecomment(request,post_id, comment_id):
     comment = Comment.objects.get(id = comment_id)
     comment.delete()
-    return redirect('post',post_id=post_id) # redirct to post view with this parameter
+    return redirect('post',post_id=post_id)
 
 #manageblog
 @login_required(login_url='login')
