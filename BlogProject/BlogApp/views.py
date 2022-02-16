@@ -157,17 +157,6 @@ def post(request,post_id):
     #geting total likes and dislikes for posts
     totallikes = post.total_likes()
     totaldislikes = post.total_dislikes()
-    is_like = False
-    for like in post.likes.all():
-        if like == request.user:  #if user has already likes this post
-            is_like = True
-            break
-    
-    is_dislike = False   #checks whether user disliked this post or not
-    for dislike in post.dislikes.all():
-        if dislike == request.user:  #if user is already disliked this post
-            is_dislike = True
-            break
     # if adding comment
     if request.method == "POST":
         form = CommentForm(request.POST , request.FILES)
@@ -187,7 +176,7 @@ def post(request,post_id):
     comments = Comment.objects.filter(post = post_id)
     form = CommentForm()
     tags = Tag.objects.filter(tags__id=post_id )
-    context = {'post': post, 'comments': comments, 'form': form ,'totallikes':totallikes,'totaldislikes':totaldislikes,'is_like':is_like,'is_dislike':is_dislike, 'tags':tags, 'form': form} 
+    context = {'post': post, 'comments': comments, 'form': form ,'totallikes':totallikes,'totaldislikes':totaldislikes,'tags':tags, 'form': form} 
     return render(request, 'BlogApp/post.html', context)
 
 # Post likes
