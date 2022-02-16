@@ -519,8 +519,8 @@ def addpost(request):
         form2 = TagForm()
         forbidden_words=list (Fwords.objects.values_list('fword', flat=True))
         fwords = ','.join(forbidden_words)
-        print( type(forbidden_words))
-        context = {'form': form, 'form2': form2, 'fwords':fwords}
+        new = True
+        context = {'form': form, 'form2': form2, 'fwords':fwords, 'new': new}
         return render (request, 'BlogApp/addpost.html', context)
 
 
@@ -577,8 +577,10 @@ def updatepost(request,post_id):
     else:
         form = PostForm(instance = postSelected)
         form2 = TagForm()
-        context = {'form': form, 'form2': form2}
-        return render(request,"BlogApp/updatepost.html",context)
+        forbidden_words=list (Fwords.objects.values_list('fword', flat=True))
+        fwords = ','.join(forbidden_words)
+        context = {'form': form, 'form2': form2, 'fwords':fwords}
+        return render(request,"BlogApp/addpost.html",context)
 
 
 
@@ -662,3 +664,8 @@ def search(request):
     else:
         context = {'noResult': True}
         return render(request,  'BlogApp/search.html', context)
+
+
+# def error_404(request, exception):
+#     data = {'name': 'ThePythonDjango.com'}
+#     return render(request, 'BlogApp/NotFound.hml')

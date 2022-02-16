@@ -13,7 +13,11 @@
 
 
 <div style="width: 70%; margin: 0 auto;">
+    {% if new %}
     <h2><b>New Post:</b> </h2>
+    {% else %}
+    <h2><b>Edit Post:</b> </h2>
+    {% endif %}
     <hr>
     <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
         {{ form.as_p }}

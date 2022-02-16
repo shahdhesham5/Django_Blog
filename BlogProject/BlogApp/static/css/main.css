@@ -1,3 +1,9 @@
 body { 
     padding-top: 70px;
+    background-color: #e4e4e4;
+}
+
+
+.navbar-brand, .nav-link{
+    color: #fff !important
 }
