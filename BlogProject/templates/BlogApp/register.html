@@ -41,8 +41,17 @@
                             </div>
                             {{ form.password2 }}
                         </div>
-                        <span style="color: #e74c3c; font-weight: bolder;">
-                            {{form.errors.as_ul}}               
+                        <span style="color: white; font-weight: bolder;">
+                            {{form.errors.as_ul}}
+                            {% for message in messages %}
+                            <ul>
+                                <li> Email 
+                                    <ul>
+                                        <li id="messages" style="font-weight: bolder;">{{message}}</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            {% endfor %}
                         </span>
                         
                            <div class="d-flex justify-content-center mt-3 login_container">

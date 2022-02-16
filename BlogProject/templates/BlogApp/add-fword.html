@@ -17,6 +17,6 @@
         <p id="messages">{{message}}</p>
         {% endfor %}
         <button type="submit" class="btn btn-primary">save</button>
-        <button type="reset" class="btn btn-danger">cancel</button>
+        <button type="reset" class="btn btn-danger"> <a href="{% url 'Fwords' %}" style="color: white;"> cancel</a></button>
     </form>
 {% endblock %}

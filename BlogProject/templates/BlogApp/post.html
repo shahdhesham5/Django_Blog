@@ -97,21 +97,7 @@
             {% endif %}
         </form>
     </div>
-    <!-- Add Comment button -->
-    <div>
-        <button class="btn btn-primary mb-2" id="button" onclick="addComment()">Add Comment
-            <i class='fas fa-pen-square'></i></button>
-        <!-- <button class="btn btn-primary col-2 " id="button" onclick="addComment()">Add Comment <i class='fas fa-pen-square'></i></button>  -->
-    </div>
     
-    
-
-    <!-- Comment Form if the user need to add a comment-->
-    <form method="POST" enctype="multipart/form-data" style="display: none;" id="form"> {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">submit</button>
-        <button type="reset" class="btn btn-danger">cancel</button>
-    </form>
 
 
 
@@ -121,7 +107,7 @@
     <!-- Comments of this Post-->
 
     {% if comments %}
-    <h6>Comments {{comments.comment_set.count }}</h6>
+    <h6>Comments {{comments..count }}</h6>
     {% for comment in comments %}
     {%if not comment.parent %}
     <div class="col-12 ">
@@ -227,7 +213,23 @@
         There are no comments for this post, be the first to comment!
     </div>
     {% endif %}
+    {% if not request.user.is_anonymous %}
+    <!-- Add Comment button -->
+    <div>
+        <button class="btn btn-primary mb-2" id="button" onclick="addComment()">Add Comment
+            <i class='fas fa-pen-square'></i></button>
+        <!-- <button class="btn btn-primary col-2 " id="button" onclick="addComment()">Add Comment <i class='fas fa-pen-square'></i></button>  -->
+    </div>
+    
+    
 
+    <!-- Comment Form if the user need to add a comment-->
+    <form method="POST" enctype="multipart/form-data" style="display: none;" id="form"> {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">submit</button>
+        <button type="reset" class="btn btn-danger">cancel</button>
+    </form>
+    {% endif %}
 
 
 

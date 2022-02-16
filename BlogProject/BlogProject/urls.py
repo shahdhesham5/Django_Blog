@@ -21,6 +21,6 @@ from django.conf.urls import handler404
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('BlogApp.urls'))
+    path('blogapp/', include('BlogApp.urls'))
 ]+ static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT)
 # handler404 = 'BlogApp.views.error_404_custom'

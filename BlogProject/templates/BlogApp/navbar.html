@@ -99,19 +99,3 @@
         </div>
     </div>
 </nav>
-<div class="fixed-bottom">
-    <a onclick="history.back()" href="#" id="backButton" class="btn btn-secondary m-2 background-dark" ><i class="fas fa-angle-left"></i>
-    Back</a>
-</div>
-
-<script>
-    window.onload = (event) => {
-        var button = document.getElementById("backButton")
-        var location = window.location.href
-        if (location.includes("/home")) {
-            button.style.display = "none"
-        }
-    }
-
-
-</script>

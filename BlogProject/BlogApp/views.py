@@ -24,14 +24,19 @@ def register(request):
     form = CreateUserForm()
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            username = form.cleaned_data.get('username')
-            #assign the user to a group on creation
-            # group = Group.objects.get(name='normaluser')
-            # user.groups.add(group)
-            messages.success(request, "Account created successfully for "+username)
-            return redirect ('login')
+        email=request.POST.get('email')
+        if email == "":
+            messages.info(request, "Email is required")
+        else:
+            form = CreateUserForm(request.POST)
+            if form.is_valid():
+                user = form.save()
+                username = form.cleaned_data.get('username')
+                #assign the user to a group on creation
+                # group = Group.objects.get(name='normaluser')
+                # user.groups.add(group)
+                messages.success(request, "Account created successfully for "+username)
+                return redirect ('login')
     context = {'form':form}
     return render(request, 'BlogApp/register.html', context)
 
@@ -69,9 +74,9 @@ def loginPage(request):
 #redirect to home-page after logout, as an AnonymousUser
 def logoutuser(request):
     logout(request)
-    return redirect(request.META.get('HTTP_REFERER'))  #to stay in the same page after logging out
+    # return redirect(request.META.get('HTTP_REFERER'))  #to stay in the same page after logging out
     
-    # return redirect('home')
+    return redirect('home')
 
 
 

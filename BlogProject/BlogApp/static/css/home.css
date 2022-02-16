@@ -9,8 +9,8 @@
 
   .active .page-link {
     color: #fff !important;
-    border: #5758BB solid 1px !important;
-    background: #5758BB !important;
+    border: #0984e3 solid 1px !important;
+    background: #0984e3 !important;
   }
 
   .pagination a:hover:not(.active) {
