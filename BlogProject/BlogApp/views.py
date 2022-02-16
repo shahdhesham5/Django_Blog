@@ -157,17 +157,6 @@ def post(request,post_id):
     #geting total likes and dislikes for posts
     totallikes = post.total_likes()
     totaldislikes = post.total_dislikes()
-    is_like = False
-    for like in post.likes.all():
-        if like == request.user:  #if user has already likes this post
-            is_like = True
-            break
-    
-    is_dislike = False   #checks whether user disliked this post or not
-    for dislike in post.dislikes.all():
-        if dislike == request.user:  #if user is already disliked this post
-            is_dislike = True
-            break
     # if adding comment
     if request.method == "POST":
         form = CommentForm(request.POST , request.FILES)
@@ -187,7 +176,7 @@ def post(request,post_id):
     comments = Comment.objects.filter(post = post_id)
     form = CommentForm()
     tags = Tag.objects.filter(tags__id=post_id )
-    context = {'post': post, 'comments': comments, 'form': form ,'totallikes':totallikes,'totaldislikes':totaldislikes,'is_like':is_like,'is_dislike':is_dislike, 'tags':tags, 'form': form} 
+    context = {'post': post, 'comments': comments, 'form': form ,'totallikes':totallikes,'totaldislikes':totaldislikes,'tags':tags, 'form': form} 
     return render(request, 'BlogApp/post.html', context)
 
 # Post likes
@@ -540,8 +529,8 @@ def addpost(request):
         form2 = TagForm()
         forbidden_words=list (Fwords.objects.values_list('fword', flat=True))
         fwords = ','.join(forbidden_words)
-        print( type(forbidden_words))
-        context = {'form': form, 'form2': form2, 'fwords':fwords}
+        new = True
+        context = {'form': form, 'form2': form2, 'fwords':fwords, 'new': new}
         return render (request, 'BlogApp/addpost.html', context)
 
 
@@ -598,8 +587,10 @@ def updatepost(request,post_id):
     else:
         form = PostForm(instance = postSelected)
         form2 = TagForm()
-        context = {'form': form, 'form2': form2}
-        return render(request,"BlogApp/updatepost.html",context)
+        forbidden_words=list (Fwords.objects.values_list('fword', flat=True))
+        fwords = ','.join(forbidden_words)
+        context = {'form': form, 'form2': form2, 'fwords':fwords}
+        return render(request,"BlogApp/addpost.html",context)
 
 
 
@@ -688,3 +679,8 @@ def search(request):
     else:
         context = {'noResult': True}
         return render(request,  'BlogApp/search.html', context)
+
+
+# def error_404(request, exception):
+#     data = {'name': 'ThePythonDjango.com'}
+#     return render(request, 'BlogApp/NotFound.hml')

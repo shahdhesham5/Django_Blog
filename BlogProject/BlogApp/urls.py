@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 
+
 urlpatterns = [
     path('home/', views.home, name = 'home'),
     #posts
@@ -51,7 +52,8 @@ urlpatterns = [
     #search for tags and post titles 
     path('search/', views.search, name='search'),
 
-
-
+ 
+    
     
 ]
+

@@ -25,7 +25,9 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['comment_info']
-
+        widgets = {
+            'comment_info': forms.TextInput(attrs={'class': 'form-control', 'data-role':'tagsinput'})
+        }
 
 
 class TagForm(forms.ModelForm):

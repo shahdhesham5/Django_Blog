@@ -1,37 +1,39 @@
 <style>
+    .logoutText {
+        visibility: hidden;
+    }
 
-@media only screen and (min-width: 990px) {
-    .logout {
-  position: relative;
-}
+    @media only screen and (min-width: 990px) {
+        .logout {
+            position: relative;
+        }
 
-.logout .logoutText {
-  visibility: hidden;
-  width: 70px;
-  background-color: rgb(168, 161, 161);
-  color: #fff;
-  text-align: center;
-  border-radius: 3px;
-  padding: 5px 0;
-  
-  /* Position the logout */
-  position: absolute;
-  z-index: 1;
-  top: 100%;
-  left: 50%;
-  margin-left: -40px;
-}
+        .logout .logoutText {
+            visibility: hidden;
+            width: 70px;
+            background-color: rgba(167, 167, 167, 0.699);
+            color: #fff;
+            text-align: center;
+            border-radius: 3px;
+            padding: 5px 0;
 
-.logout:hover .logoutText {
-  visibility: visible;
-} 
-}
+            /* Position the logout */
+            position: absolute;
+            z-index: 1;
+            top: 100%;
+            left: 50%;
+            margin-left: -40px;
+        }
 
+        .logout:hover .logoutText {
+            visibility: visible;
+        }
+    }
 </style>
-<nav class="navbar navbar-expand-lg navbar-light bg-light  fixed-top  justify-content-between">
+<nav class="navbar navbar-expand-lg navbar-light bg-light  fixed-top  justify-content-between background-light" >
     <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'home' %}"> <i
-                class="fas fa-home col-2 ml-5" style="font-size: 40;"></i></a>
+        <a class="navbar-brand" href="{% url 'home' %}"> <i class="fas fa-home col-2 ml-5"
+                style="font-size: 40;"></i></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -41,7 +43,8 @@
 
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item mt-1">
-                    <a class="nav-link" href="{% url 'yourposts' user.id %}">Your posts <i class='far fa-address-card'></i></a>
+                    <a class="nav-link" href="{% url 'yourposts' user.id %}">Your posts <i
+                            class='far fa-address-card'></i></a>
                 </li>
                 {% if request.user.is_superuser %}
                 <li class="nav-item mt-1">
@@ -58,7 +61,7 @@
                 {% csrf_token %}
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
                     value="{{searchValue}}" name="selected">
-                <button class="btn btn-outline-success" type="submit">Search</button>
+                <button class="btn background-dark" style="border:none; color: #fff ;" type="submit">Search</button>
             </form>
 
             <ul class="navbar-nav mr-auto mb-2 mb-lg-0 pb-0">
@@ -66,27 +69,29 @@
                 <li class="nav-item">
                     <a class="nav-link logout" href="{% url 'logout' %}">
                         {{request.user|title}} <i class="fas fa-sign-out-alt" style="font-size: 20;"></i>
+                        <span class="logoutText">Log out</span>
                     </a>
                 </li>
             </ul>
             {% else %}
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                 <!-- posts -->
+                    <!-- posts -->
                 </li>
             </ul>
             <form class="d-flex" style="margin-top: 3px; margin-bottom: 3px;" action="{% url 'search' %}" method="POST">
                 {% csrf_token %}
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
                     value="{{searchValue}}" name="selected">
-                <button class="btn btn-outline-success" type="submit">Search</button>
+                <button class="btn background-dark" style="border:none; color: #fff;"  type="submit">Search</button>
             </form>
             <ul class="navbar-nav mr-auto mb-2 mb-lg-0 pb-0">
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page" href="{% url 'register' %}">Sign up</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{% url 'login' %}"> Login <i class='fas fa-user'></i> </a>
+                    <a class="nav-link" aria-current="page" href="{% url 'login' %}"> Login <i class='fas fa-user'></i>
+                    </a>
                 </li>
 
             </ul>
@@ -94,15 +99,19 @@
         </div>
     </div>
 </nav>
-<a onclick="history.back()" href="#" id="backButton"  class="btn btn-secondary m-2"><i class="fas fa-angle-left"></i> Back</a>
+<div class="fixed-bottom">
+    <a onclick="history.back()" href="#" id="backButton" class="btn btn-secondary m-2 background-dark" ><i class="fas fa-angle-left"></i>
+    Back</a>
+</div>
+
 <script>
     window.onload = (event) => {
         var button = document.getElementById("backButton")
         var location = window.location.href
-        if(location.includes("/blogapp/home")){
-            button.style.display ="none"
+        if (location.includes("/home")) {
+            button.style.display = "none"
         }
     }
-    
+
 
 </script>

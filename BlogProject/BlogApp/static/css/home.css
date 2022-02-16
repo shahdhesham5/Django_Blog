@@ -8,9 +8,9 @@
   }
 
   .active .page-link {
-    color: black !important;
-    border: #BCBBBF solid 1px !important;
-    background: #BCBBBF !important;
+    color: #fff !important;
+    border: #5758BB solid 1px !important;
+    background: #5758BB !important;
   }
 
   .pagination a:hover:not(.active) {
