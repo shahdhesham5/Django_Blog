@@ -66,7 +66,7 @@
         <!-- like Form if the user need to add a like-->
         <form method="POST" action="{% url 'likepost' post.id %}">
             {% csrf_token %}
-            {% if is_like %}
+            {% if request.user in post.likes.all %}
             <button type="submit" name="post_id" value="{{ post.id }}"
                 style="background-color: transparent; border: none; box-shadow: none;">
                 <i class="fas fa-thumbs-up" style="color: blue; font-size:x-large;"></i>
@@ -82,7 +82,7 @@
         <!-- dislike Form if the user need to add a dislike-->
         <form method="POST" action="{% url 'dislikepost' post.id %}">
             {% csrf_token %}
-            {% if is_dislike %}
+            {% if request.user in post.dislikes.all %}
             <button type="submit" name="post_id" value="{{ post.id }}"
                 style="background-color: transparent; border: none; box-shadow: none;">
                 <i class="fas fa-thumbs-down" style="color:brown; font-size:x-large;"></i>
@@ -157,8 +157,8 @@
                     <!-- dislike Form if the user need to add a dislike to a comment-->
                     <form method="POST" action="{% url 'dislike-comment' post_id=post.id comment_id=comment.id %}">
                         {% csrf_token %}
-                        {% if is_dislike %}
-                        <button type="submit" name="comment_id" value="{{ comment_id }}"
+                        {% if request.user in comment.dislikes.all %}
+                            <button type="submit" name="comment_id" value="{{ comment_id }}"
                             style="background-color: transparent; border: none; box-shadow: none;">
                             <i class="fas fa-thumbs-down" style="color:brown;"></i>
                             <span>{{ comment.dislikes.all.count}}</span>
