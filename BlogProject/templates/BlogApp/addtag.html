@@ -11,13 +11,13 @@
 {% endblock %}
 
 {% block main %}
-    <h2><b>Add Tag</b> </h2>
-    <form method="POST"> {% csrf_token %}
+    <h2><b> {% if edit %} Edit Tag {% else %} Add tag {% endif %}</b> </h2>
+    <form method="POST" class="col-8 col-md-4"> {% csrf_token %}
         {{ form.as_p }}
         {% for message in messages %}
         <p id="messages">{{message}}</p>
         {% endfor %}
         <button type="submit" class="btn btn-primary">save</button>
-        <button type="reset" class="btn btn-danger">cancel</button>
+        <button type="reset" class="btn btn-danger"> <a href="{% url 'tags' %}" style="color: white;"> cancel</a></button>
     </form>
 {% endblock %}

@@ -1,4 +1,5 @@
 from multiprocessing import context
+from pickle import TRUE
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from django.test import tag
@@ -360,8 +361,8 @@ def unsubscribe(request, cat_id):
 def enterCat(request, cat_id):
     category = Category.objects.get(id = cat_id)
     category_posts = Post.objects.filter(category_id=cat_id)
-    context ={'category': category, 'category_posts':category_posts}
-    return render (request, 'BlogApp/enterCategory.html', context)
+    context ={'category': category, 'all_posts':category_posts}
+    return render (request, 'BlogApp/posts.html', context)
 
 
 def tag(request, tag_id):
@@ -418,8 +419,8 @@ def editCat(request, cat_id):
             return redirect('categories')
     else:
         form = CategoryForm(instance=category)
-        context = {'form': form}
-        return render (request, 'BlogApp/editCat.html', context)
+        context = {'form': form, 'edit':True}
+        return render (request, 'BlogApp/addcat.html', context)
 
 #show tags for admin
 @login_required(login_url='login')
@@ -442,7 +443,9 @@ def addtag(request):
         except:
             form = TagForm(request.POST)
             if form.is_valid():
-                form.save()
+                tag=form.save(commit=False)
+                tag.tag_item = input.replace('#','')
+                tag.save()
                 return redirect('tags')
     else:
         form = TagForm()
@@ -465,14 +468,17 @@ def deltag(request,tag_id):
 def editTag(request, tag_id):
     tag = Tag.objects.get(id=tag_id)
     if request.method == 'POST':
+        input = request.POST.get('tag_item')
         form = TagForm(request.POST, instance=tag)
         if form.is_valid:
-            form.save()
+            tag=form.save(commit=False)
+            tag.tag_item = input.replace('#','')
+            tag.save()
             return redirect('tags')
     else:
         form = TagForm(instance=tag)
-        context = {'form': form}
-        return render (request, 'BlogApp/edit-tag.html', context)
+        context = {'form': form, 'edit':True}
+        return render (request, 'BlogApp/addtag.html', context)
 
 
 # show posts
@@ -485,8 +491,8 @@ def posts(request):
 @login_required(login_url='login')
 def yourPosts(request, user_id):
     user_posts = Post.objects.filter(user_id=request.user.id)
-    context = {'user_posts':user_posts}
-    return render (request,'BlogApp/showposts.html', context)
+    context = {'all_posts':user_posts}
+    return render (request,'BlogApp/posts.html', context)
 
 #addpost
 @login_required(login_url='login')

@@ -10,11 +10,11 @@
 {% endblock %}
 
 {% block main %}
-    <h2>Users</h2>
-    <div class="col-10 mx-auto ">
+    <h2 class="my-2">Users</h2>
+    <div class="col-12">
 
     
-        <table class="table mt-5 border border-1 text-center" >
+        <table class="table mt-2 border border-1 text-center table-light table-hover" >
             <tr>
                 <th>ID</th>
                 <th>Username</th>
@@ -26,14 +26,14 @@
             </tr>
             {% for user in users %}
                 {% if request.user.username == user.username %}
-                    <tr style="background-color: #d63031; color: wheat;">
-                        <th>{{ user.id}}</th>
-                        <th>{{ user.username|title }}</th>
-                        <th>{{ user.is_superuser }}</th>
-                        <th>{{ user.email}}</th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
+                    <tr class="bg-danger" style="color: white;">
+                        <th class="bg-danger">{{ user.id}}</th>
+                        <th class="bg-danger">{{ user.username|title }}</th>
+                        <th class="bg-danger">{{ user.is_superuser }}</th>
+                        <th class="bg-danger">{{ user.email}}</th>
+                        <th class="bg-danger"></th>
+                        <th class="bg-danger"></th>
+                        <th class="bg-danger"></th>
                     </tr>
                 {% else %}
                     {% if not user.is_superuser %}

@@ -43,10 +43,14 @@ class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = ('category',)
-
+        widgets = {
+            'category': forms.TextInput(attrs={'class': 'form-control'})
+        }
 #a form to add a Forbidden Word
 class FwordsForm(forms.ModelForm):
     class Meta:
         model = Fwords
         fields = ('fword',)
-
+        widgets = {
+            'fword': forms.TextInput(attrs={'class': 'form-control'})
+        }

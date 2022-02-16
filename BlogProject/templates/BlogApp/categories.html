@@ -10,9 +10,9 @@
 {% endblock %}
 
 {% block main %}
-<a href="{% url 'add-cat' %}" > <button type="button" class="btn btn-success mb-2">New category <b>+</b></button> </a>
+<a href="{% url 'add-cat' %}" > <button type="button" class="btn btn-success mb-2 my-3">New category <b>+</b></button> </a>
 <div class="col-5">
-    <table class="table table-hover" style="font-weight: bold;">
+    <table class="table mt-2 border border-1 table-light table-hover" style="font-weight: bold;">
         {% for category in all_categories %}
         <tr>
             <th>{{category.category}}</th>

@@ -12,9 +12,9 @@
 {% block main %}
 
 
-<a href="{% url 'add-fword' %}" > <button type="button" class="btn btn-success mb-2">Forbidden Word <b>+</b></button> </a>
+<a href="{% url 'add-fword' %}" > <button type="button" class="btn btn-success mb-2 my-3">Forbidden Word <b>+</b></button> </a>
 <div class="col-5">
-    <table class="table table-hover" style="font-weight: bold;">
+    <table class="table mt-2 border border-1 table-light table-hover" style="font-weight: bold;">
         {% for fword in all_fwords %}
         <tr>
             <th>{{fword.fword}}</th>
