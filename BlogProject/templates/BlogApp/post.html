@@ -66,10 +66,10 @@
         <!-- like Form if the user need to add a like-->
         <form method="POST" action="{% url 'likepost' post.id %}">
             {% csrf_token %}
-            {% if is_like %}
+            {% if  is_like %}
             <button type="submit" name="post_id" value="{{ post.id }}"
                 style="background-color: transparent; border: none; box-shadow: none;">
-                <i class="fas fa-thumbs-up post" style="color: blue; font-size:x-large;"></i>
+                <i class="fas fa-thumbs-up post" style="color: rgb(51, 120, 231); font-size:x-large;"></i>
                 <span>{{ post.likes.count }}</span>
             </button>
             {% else %}
@@ -85,7 +85,7 @@
             {% if is_dislike %}
             <button type="submit" name="post_id" value="{{ post.id }}"
                 style="background-color: transparent; border: none; box-shadow: none;">
-                <i class="fas fa-thumbs-down" style="color:brown; font-size:x-large;"></i>
+                <i class="fas fa-thumbs-down" style="color:rgb(248, 54, 54); font-size:x-large;"></i>
                 <span>{{ post.dislikes.count }}</span>
             </button>
             {% else %}
@@ -216,5 +216,9 @@
         }
     }
 </script>
+
+
+
+
 <!-- end Script-->
 {% endblock %}
