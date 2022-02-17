@@ -7,3 +7,9 @@ body {
 .navbar-brand, .nav-link{
     color: #fff !important
 }
+
+.bodyPost{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
