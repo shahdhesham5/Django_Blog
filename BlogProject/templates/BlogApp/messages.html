@@ -1,0 +1,30 @@
+{% extends 'BlogApp/main.html' %}
+{% load static %}
+
+{% block head %}
+<title>Messages</title>
+{% endblock %}
+
+{% block navbar %}
+{% include 'BlogApp/navbar.html' %}
+{% endblock %}
+
+{% block main %}
+
+<h2 class="my-2">Messages </h2>
+<span class="m-2"><a class="link-primary" href="{% url 'showusers' %}">Users</a> </span> 
+
+<div class="col-5 my-3">
+    <table class="table mt-2 border border-1 table-light table-hover" style="font-weight: bold;">
+        {% for message in all_messages %}
+        <tr>
+            <th>{{message.user}}</th>
+            <td>{{message.content}}</td>
+            <td><a href="{% url 'del-msg' message.id %}" style="color: #d63031;">Delete</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+</div>
+
+{% endblock %}

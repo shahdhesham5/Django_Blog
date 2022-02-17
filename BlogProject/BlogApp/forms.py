@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-from .models import Category, Comment, Post ,Fwords, Tag
+from .models import Category, Comment, Message, Post ,Fwords, Tag
 #a modified UserCreationForm so we can add a new field(email)
 class CreateUserForm(UserCreationForm):
     class Meta:
@@ -53,4 +53,13 @@ class FwordsForm(forms.ModelForm):
         fields = ('fword',)
         widgets = {
             'fword': forms.TextInput(attrs={'class': 'form-control'})
+        }
+
+
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        fields = ['content']
+        widgets = {
+            'content': forms.TextInput(attrs={'class': 'form-control'})
         }
