@@ -112,6 +112,15 @@ def makeadmin(request, user_id):
     my_group.user_set.add(user)
     user.is_staff = True
     user.is_superuser = True
+    email= user.email
+    #send email confirming the block
+    send_mail(
+    'Congratulations!',
+    f'Congratulations {user.username}, your account has been promoted! welcome on board!',
+    'djangoblog2022@gmail.com',
+    [f'{email}'],
+    fail_silently=False,
+)
     #if the user was blocked before, they will be unblocked
     try:
         group = Group.objects.get(name='blockedusers')
@@ -130,6 +139,15 @@ def blockUser(request,user_id):
     user = User.objects.get(id = user_id)
     my_group = Group.objects.get(name = "blockedusers")
     my_group.user_set.add(user)
+    email= user.email
+    #send email confirming the block
+    send_mail(
+    'Account disabled!',
+    f'Hello {user.username} your account has been disabled please contact your admin',
+    'djangoblog2022@gmail.com',
+    [f'{email}'],
+    fail_silently=False,
+)
     return redirect ('showusers')
 
 #unblock user
@@ -139,6 +157,15 @@ def unblockUser(request, user_id):
     user = User.objects.get(id = user_id)
     group = Group.objects.get(name = "blockedusers")
     user.groups.remove(group)
+    email= user.email
+    #send email confirming the block
+    send_mail(
+    'Account unblocked!',
+    f'Hello {user.username} your account has been unblocked, welcome back!',
+    'djangoblog2022@gmail.com',
+    [f'{email}'],
+    fail_silently=False,
+)
     return redirect ('showusers')
 
 #home
