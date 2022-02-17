@@ -448,20 +448,19 @@ def delectCat(request, cat_id):
 def editCat(request, cat_id):
     category =  Category.objects.get(id=cat_id)
     categories_list = list(Category.objects.values_list('category', flat=True))
+    form = CategoryForm(instance=category)
+    context = {'form': form, 'edit':True}
     if request.method == 'POST':
         #check if category already exists
         input = request.POST.get("category")
         if input in categories_list:
             messages.info (request, 'Category already exists')
-            return redirect ('add-cat')
-        #if not found
+            return render (request, 'BlogApp/addcat.html', context)        #if not found
         form = CategoryForm(request.POST, instance=category)
         if form.is_valid:
             form.save()
             return redirect('categories')
     else:
-        form = CategoryForm(instance=category)
-        context = {'form': form, 'edit':True}
         return render (request, 'BlogApp/addcat.html', context)
 
 #show tags for admin
@@ -509,8 +508,14 @@ def deltag(request,tag_id):
 @allowed_users(allowed_roles=['admin'])
 def editTag(request, tag_id):
     tag = Tag.objects.get(id=tag_id)
+    form = TagForm(instance=tag)
+    tags_list = list(Tag.objects.values_list('tag_item', flat=True))
+    context = {'form': form, 'edit':True}
     if request.method == 'POST':
         input = request.POST.get('tag_item')
+        if input in tags_list:
+            messages.info (request, 'Tag already exists')      
+            return render (request, 'BlogApp/addtag.html', context)  
         form = TagForm(request.POST, instance=tag)
         if form.is_valid:
             tag=form.save(commit=False)
@@ -518,8 +523,6 @@ def editTag(request, tag_id):
             tag.save()
             return redirect('tags')
     else:
-        form = TagForm(instance=tag)
-        context = {'form': form, 'edit':True}
         return render (request, 'BlogApp/addtag.html', context)
 
 
@@ -683,20 +686,20 @@ def editFwords(request, fword_id):
     # grapping the word that want 
     fword= Fwords.objects.get(id=fword_id) 
     word = list(Fwords.objects.values_list('fword', flat=True))
+    form = FwordsForm(instance=fword)
+    context = {'form': form , 'edit': True}
     if request.method == 'POST':
         form = FwordsForm(request.POST, instance=fword)
         x = request.POST.get('fword')
         if x in  word :
             messages.info(request, 'it is already exists')
-            return redirect('add-fword')
+            return render(request, 'BlogApp/add-fword.html', context)
         else:
             form = FwordsForm(request.POST, instance=fword)
             form.is_valid()
             form.save()
             return redirect('Fwords')
     else:
-        form = FwordsForm(instance=fword)
-        context = {'form': form}
         return render(request, 'BlogApp/add-fword.html', context)
 
 #forbidden words

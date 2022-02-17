@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block main %}
-    <h2><b>Add Forbidden Word </b> </h2>
+    <h2><b>{%if edit%} Edit Forbidden Word {% else %} Add Forbidden Word {% endif %}</b> </h2>
     <form method="POST" class="col-8 col-md-4"> {% csrf_token %}
         {{ form.as_p }}
         {% for message in messages %}
