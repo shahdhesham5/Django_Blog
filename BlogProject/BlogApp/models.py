@@ -75,3 +75,5 @@ class Subscribers(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     
 
+
+
