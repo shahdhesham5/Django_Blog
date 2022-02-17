@@ -718,7 +718,9 @@ def search(request):
         selected = request.POST.get("selected")
         posts = Post.objects.all()
         tags = Tag.objects.all()
-        
+        if not selected:
+            context = {'noResult': True, 'searchValue': selected}
+            return render(request,  'BlogApp/search.html', context)
         for tag in tags:
             if selected.lower() in tag.tag_item.lower():
                 sel = Post.objects.filter(tag=tag)
