@@ -30,6 +30,14 @@ def register(request):
         if email == "":
             messages.info(request, "Email is required")
         else:
+            try:
+                x=User.objects.get(email=email)
+                messages.info(request, "Email is already registered")
+                context = {'form':form}
+                return render(request, 'BlogApp/register.html', context)
+               
+            except:    
+                pass
             form = CreateUserForm(request.POST)
             if form.is_valid():
                 user = form.save()
@@ -39,6 +47,7 @@ def register(request):
                 # user.groups.add(group)
                 messages.success(request, "Account created successfully for "+username)
                 return redirect ('login')
+            
     context = {'form':form}
     return render(request, 'BlogApp/register.html', context)
 
