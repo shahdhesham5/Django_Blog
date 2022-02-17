@@ -35,7 +35,7 @@
           </div>
 
 
-          <div class="card-body p-2 pb-4" style="height: 30vmin;">
+          <div class="card-body p-2 bodyPost" style="height: 30vmin;">
             <h4 class="card-title m-1 ">{{post.title}}</h4>
           
             <span><small class="card-title m-1">{{post.created_on}}</small></span>
@@ -44,7 +44,7 @@
                         text-overflow: ellipsis;  ">
               {{post.content}}
             </p>
-            <div class="text-center">
+            <div class="text-center p-0">
 
               {% if post.user == request.user or user.is_superuser %}
               <a class="btn btn-danger " href="{% url 'deletepost' post.id %}"> <i class='fas fa-trash'></i></a>
