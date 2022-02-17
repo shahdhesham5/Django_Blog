@@ -1,11 +1,12 @@
 from multiprocessing import context
 from pickle import TRUE
+from django import forms
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from django.test import tag
 from BlogApp.decorators import unauthenticated_user,allowed_users, admin_only
-from BlogApp.models import Category, Post , Comment, Fwords, Tag, Subscribers
-from .forms import CommentForm, CreateUserForm,CategoryForm, FwordsForm,PostForm , TagForm#the modified UserCreationForm
+from BlogApp.models import Category, Message, Post , Comment, Fwords, Tag, Subscribers
+from .forms import CommentForm, CreateUserForm,CategoryForm, FwordsForm, MessageForm,PostForm , TagForm#the modified UserCreationForm
 from django.core.paginator import Paginator
 #authentication
 from django.contrib.auth.forms import UserCreationForm #replaced by CreateUserForm
@@ -55,7 +56,9 @@ def loginPage(request):
         if user is not None:
             #check if blocked
             if user.groups.filter(name='blockedusers'):
-                return render(request, 'BlogApp/blockedMessage.html' )
+                form = MessageForm()
+                context = {'user': user, 'form':form }
+                return render(request, 'BlogApp/blockedMessage.html' , context)
             else:
                 if user is not None:
                     login(request, user)
@@ -140,6 +143,16 @@ def unblockUser(request, user_id):
 
 #home
 def home(request):
+    if request.method == "POST":
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            user = User.objects.get(id= request.POST.get("user"))
+            message.user = user
+            message.save()
+            messages.info(request, 'Your message has been sent!')
+            context = {'confirmation': True , 'user':user}
+            return render(request, 'BlogApp/blockedMessage.html',context)
     all_categories = Category.objects.all()
     tags = Tag.objects.all()
     all_posts = Post.objects.all()
@@ -691,6 +704,19 @@ def search(request):
         context = {'noResult': True}
         return render(request,  'BlogApp/search.html', context)
 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def userMessage(request):
+    all_messages = Message.objects.all()
+    context = {'all_messages':all_messages}
+    return render (request,'BlogApp/messages.html', context)
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def delMsg(request, msg_id):
+        msg = Message.objects.get(id=msg_id)
+        msg.delete()
+        return redirect('messages')
 
 # def error_404(request, exception):
 #     data = {'name': 'ThePythonDjango.com'}

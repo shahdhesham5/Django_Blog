@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User #User model to access users and admins
 from django.utils import timezone
-
 class Category(models.Model):
     category = models.CharField(max_length=20)
     def __str__(self):
@@ -73,6 +72,12 @@ class Comment(models.Model):
 class Subscribers(models.Model):
     subscriber = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+class Message(models.Model):
+    content = models.CharField(max_length=200)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.content
     
 
 

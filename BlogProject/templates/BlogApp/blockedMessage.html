@@ -9,9 +9,30 @@
 
 
 {% block main %}
-    <div class="alert alert-danger" role="alert">
-        your account has been disabled, please contact your admin
-        <a href="{% url 'login' %}"> login</a>
-    </div>
+<div class="alert alert-danger" role="alert">
+    {{user}}, your account has been disabled, please contact your admin
+    <a href="{% url 'login' %}"> login</a>
+</div>
+{% if confirmation %}
+    {% for message in messages %}
+    {{message}}
+    {% endfor %}
+{% else %}
+    <button class="btn btn-danger mb-3" onclick="showForm()" id="showButton">Send Message to admin?</button>
+    <form method="POST" action="{% url 'home' %}" enctype="multipart/form-data" id="userMessage" style="display: none;"> {% csrf_token %}
+        {{ form.as_p }} 
+        <input type="hidden" name="user" id="id_user" value="{{user.id}}">
+        <button type="submit" class="btn btn-primary">Send</button>
+    </form>
+{% endif %}
+<script>
+        function showForm(){
+        input = document.getElementById("userMessage")
+        input.style.display ="block"
+        btn = document.getElementById("showButton")
+        btn.style.display ="none"
+        // btn.classList.remove("d-block")
+    }
+</script>
 {% endblock %}
 
