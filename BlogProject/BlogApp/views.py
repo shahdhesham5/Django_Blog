@@ -654,7 +654,7 @@ def updatepost(request,post_id):
         form2 = TagForm()
         forbidden_words=list (Fwords.objects.values_list('fword', flat=True))
         fwords = ','.join(forbidden_words)
-        context = {'form': form, 'form2': form2, 'fwords':fwords}
+        context = {'form': form, 'form2': form2, 'fwords':fwords, 'edit': True}
         return render(request,"BlogApp/addpost.html",context)
 
 

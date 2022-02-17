@@ -2,7 +2,11 @@
 {% load static %}
 
 {% block head %}
+{% if  edit %}
+<title>Edit Post</title>
+{% else %}
 <title>Add Post</title>
+{% endif %}
 {% endblock %}
 
 {% block navbar %}
