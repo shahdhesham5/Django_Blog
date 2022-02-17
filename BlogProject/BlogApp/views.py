@@ -367,6 +367,8 @@ def manageBlog(request):
 
 
 #show categories on sidebar
+@login_required(login_url='login')
+@admin_only
 def categories(request):
     all_categories = Category.objects.all()
     context = {'all_categories':all_categories}
@@ -404,7 +406,7 @@ def enterCat(request, cat_id):
     context ={'category': category, 'all_posts':category_posts}
     return render (request, 'BlogApp/posts.html', context)
 
-
+#tags on homepage
 def tag(request, tag_id):
     tag_name = Tag.objects.get(id = tag_id)
     posts = Post.objects.filter(tag=tag_id).all()
@@ -706,7 +708,7 @@ def delFword(request, fword_id):
     return redirect('Fwords')
 
 
-    
+#search function
 def search(request):
     searchResults = Post.objects.none()
     if request.method == "POST":
